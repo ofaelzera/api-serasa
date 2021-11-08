@@ -9,9 +9,39 @@ use SimpleXMLElement;
 use SoapFault;
 
 use App\Models\Util\CordonSoapClient;
+use Illuminate\Support\Facades\Http;
+use GuzzleHttp\Client;
+use App\Models\Positiva\ConEmpresa;
 
 class Serasa
 {
+
+    public static function getLoginApiSerasa($Producao)
+    {
+
+        $client = new Client();
+
+        if($Producao){
+            $Url = 'https://api.serasaexperian.com.br/security/iam/v1/client-identities/login';
+        }else{
+            $Url = 'https://uat-api.serasaexperian.com.br/security/iam/v1/client-identities/login';
+        }
+
+        $res = $client->request('POST', $Url, [
+            'headers' => [
+                'content-type'  => 'application/json',
+                'Authorization' => 'Basic MjM4MTUwMThzZDpNVURBQDEyMw==',
+                'php-auth-user' => '23815018',
+                'php-auth-pw'   => 'MUDA@123'
+            ],
+        ]);
+
+        if($res->getStatusCode() == 201){
+            //$response_data;
+        }else{
+            //$response_data = null;
+        }
+    }
 
     public static function sendDados($aArrayOpcoes)
     {

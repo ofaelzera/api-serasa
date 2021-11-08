@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Api\MeProtejaController;
 use App\Http\Controllers\Api\ConcentreController;
+use App\Http\Controllers\Api\ProredeController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -20,19 +22,40 @@ use App\Http\Controllers\Api\ConcentreController;
 
 Route::post('auth/login',    [AuthController::class, 'login']);
 
-Route::prefix('auth')->middleware('apiJwt')->group(function () {
-    Route::post('logout',   [AuthController::class, 'logout']);
-    Route::post('refresh',  [AuthController::class, 'refresh']);
-    Route::post('me',       [AuthController::class, 'me']);
+
+Route::middleware('apiJwt')->group(function () {
+
+
+    Route::prefix('auth')->group(function () {
+        Route::post('logout',   [AuthController::class, 'logout']);
+        Route::post('refresh',  [AuthController::class, 'refresh']);
+        Route::post('me',       [AuthController::class, 'me']);
+    });
+
+    Route::prefix('meproteja')->group(function () {
+
+        Route::post('/incluir/empresa', [MeProtejaController::class, 'incluirEmpresa']);
+        Route::post('/excluir/empresa', [MeProtejaController::class, 'excluirEmpresa']);
+        Route::post('/consultar/empresa', [MeProtejaController::class, 'consultarEmpresa']);
+
+        Route::post('/incluir/socio', [MeProtejaController::class, 'incluirSocio']);
+        Route::post('/excluir/socio', [MeProtejaController::class, 'excluirSocio']);
+        Route::post('/consultar/socio', [MeProtejaController::class, 'consultarSocio']);
+
+    });
+
+    Route::prefix('concentre')->group(function () {
+
+        Route::post('/consulta/cnpj', [ConcentreController::class, 'consulta_cnpj']);
+        Route::post('/consulta/cpf', [ConcentreController::class, 'consulta_cpf']);
+
+    });
+
+    Route::prefix('prorede')->group(function () {
+        Route::get('analyse_sales', [ProredeController::class, 'AnalyseSales']);
+    });
+
+
 });
 
-Route::get('/clients', [ClientsController::class, 'index']);
-
-Route::prefix('meproteja')->middleware('apiJwt')->group(function () {
-    Route::post('/incluir/empresa', [MeProtejaController::class, 'incluirEmpresa']);
-});
-
-Route::prefix('concentre')->middleware('apiJwt')->group(function () {
-    Route::post('/consulta/cnpj', [ConcentreController::class, 'consulta_cnpj']);
-    Route::post('/consulta/cpf', [ConcentreController::class, 'consulta_cpf']);
-});
+//Route::post('prorede/analyse_sales', [ProredeController::class, 'AnalyseSales']);
