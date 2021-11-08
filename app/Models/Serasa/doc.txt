@@ -1,0 +1,26 @@
+doc referente a fila mq
+https://www.ibm.com/docs/pt-br/ibm-mq/9.2?topic=explorer-mq-queues
+https://www.ibm.com/docs/pt-br/ibm-mq/9.1?topic=SSFKSJ_9.1.0/com.ibm.mq.pro.doc/q001020_.htm
+https://www.ibm.com/docs/pt-br/ibm-mq/9.2
+
+
+Segue dados abaixo:
+
+Homologação:
+IP de origem: 131.100.62.255, 177.19.238.58
+IP: 200.245.207.155
+Porta: 1405
+Gerenciador: QMIHSER
+Canal: POSITIVACON.MEAVISE
+Fila Principal: HMEAVISE.RELATORIO037530040 (raiz do cnpj com 9 dígitos)
+Fila Backup: HMEAVISE.HISTORICO037530040 (raiz do cnpj com 9 dígitos)
+
+
+Produção:
+IP de origem: 192.99.227.236
+IP: 200.245.207.146
+Porta: 1425
+Gerenciador: QMIFTSERASA
+Canal: POSITIVACON.MEAVISE
+Fila Principal: MEAVISE.RELATORIO037530040 (raiz do cnpj com 9 dígitos)
+Fila Backup: MEAVISE.HISTORICO0037530040 (raiz do cnpj com 9 dígitos)
