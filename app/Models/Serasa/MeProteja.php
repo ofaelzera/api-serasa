@@ -4,7 +4,7 @@ namespace App\Models\Serasa;
 class MeProteja
 {
 
-    private static $PRODUCAO = false;
+    private static $PRODUCAO = true;
 
     public static function isProducao()
     {
