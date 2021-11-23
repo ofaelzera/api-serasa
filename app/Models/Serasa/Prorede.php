@@ -113,7 +113,7 @@ class Prorede
                 'cidade'                    => $cidade->aMunicipio,
                 'uf'                        => $cidade->aUF,
                 'ddd'                       => Serasa::getSoNumeroZeroEsquerda($cliente->nDDD, 5),
-                'telefone'                  => Serasa::getSoNumeroZeroEsquerda($cliente->nTelefone, 9),
+                'telefone'                  => Serasa::getSoNumeroZeroEsquerda($cliente->aFone, 9),
                 'ramal'                     => null,
                 'contato'                   => $cliente->aContato,
                 'agencia'                   => $cliente->nAgencia,
@@ -131,7 +131,11 @@ class Prorede
 
             if ($res->getStatusCode() == 200){
                 $response_data = json_decode($res->getBody()->getContents(), true);
-            }else{
+            }
+            else if ($res->getStatusCode() == 201){
+                $response_data = json_decode($res->getBody()->getContents(), true);
+            }
+            else{
                 $response_data = null;
             }
 
