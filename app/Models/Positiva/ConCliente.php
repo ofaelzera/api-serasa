@@ -101,4 +101,9 @@ class ConCliente extends Model
 	{
 		return $this->hasMany(ConLogon::class, 'nIdCliente');
 	}
+
+    public function getContrato()
+	{
+		return $this->belongsTo(ConContrato::class, 'nIdCliente', 'ID');
+	}
 }

@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Api\MeProtejaController;
 use App\Http\Controllers\Api\ConcentreController;
+use App\Http\Controllers\Api\MeAviseController;
 use App\Http\Controllers\Api\ProredeController;
 
 /*
@@ -42,6 +43,8 @@ Route::middleware('apiJwt')->group(function () {
         Route::post('/excluir/socio', [MeProtejaController::class, 'excluirSocio']);
         Route::post('/consultar/socio', [MeProtejaController::class, 'consultarSocio']);
 
+        Route::post('/incluir/dados/', [MeProtejaController::class, 'incluir_dados']);
+
     });
 
     Route::prefix('concentre')->group(function () {
@@ -52,10 +55,14 @@ Route::middleware('apiJwt')->group(function () {
     });
 
     Route::prefix('prorede')->group(function () {
-        Route::get('analyse_sales', [ProredeController::class, 'AnalyseSales']);
+        Route::post('analyse_sales', [ProredeController::class, 'AnalyseSales']);
+        Route::post('partners_orders', [ProredeController::class, 'PartnersOrders']);
     });
 
+});
 
+Route::prefix('meavise')->group(function () {
+    Route::get('teste', [MeAviseController::class, 'teste']);
 });
 
 //Route::post('prorede/analyse_sales', [ProredeController::class, 'AnalyseSales']);

@@ -23,24 +23,33 @@ class Serasa
 
         if($Producao){
             $Url = 'https://api.serasaexperian.com.br/security/iam/v1/client-identities/login';
+            $Auth['Login']      = '615f6052f5030d7c40008991';
+            $Auth['Password']   = '09980004c7d0305f2506f516';
         }else{
             $Url = 'https://uat-api.serasaexperian.com.br/security/iam/v1/client-identities/login';
+            $Auth['Login']      = '615f604fc57d9001fb14a867';
+            $Auth['Password']   = '668a41bf1009d75cf406f516';
         }
+
+
 
         $res = $client->request('POST', $Url, [
             'headers' => [
                 'content-type'  => 'application/json',
-                'Authorization' => 'Basic MjM4MTUwMThzZDpNVURBQDEyMw==',
-                'php-auth-user' => '23815018',
-                'php-auth-pw'   => 'MUDA@123'
             ],
+            'auth' => [
+                $Auth['Login'],
+                $Auth['Password']
+            ]
         ]);
 
         if($res->getStatusCode() == 201){
-            //$response_data;
+            $response_data = json_decode($res->getBody()->getContents(), true);
         }else{
-            //$response_data = null;
+            $response_data = null;
         }
+
+        return $response_data;
     }
 
     public static function sendDados($aArrayOpcoes)
@@ -345,6 +354,23 @@ class Serasa
         $aValor = substr($aValor, 0, $nTam);
 
         return $aValor;
+    }
+
+    public static function getNumeroFilialDgCNPJ($aValor, $nTam)
+    {
+        $aValor = preg_replace("/[^0-9]/", "", $aValor);
+        //                                 1111
+        //                       01234567890123
+        // 126456789 12345678    12345678901234
+        // 99.999.999/0001-99 => 99999999000199 => tam: 14
+        $aValor = str_pad($aValor, 14, '0', STR_PAD_LEFT);
+        $aValor = substr($aValor, 8, 6);
+
+        $nTamAtual = strlen($aValor);
+        if($nTamAtual > $nTam) {
+            return substr($aValor, $nTamAtual-$nTam, $nTam);
+        }
+        return str_pad($aValor, $nTam, '0', STR_PAD_LEFT);
     }
 
 }

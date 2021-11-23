@@ -229,4 +229,15 @@ class MeProtejaController extends Controller
         }
     }
 
+    public function incluir_dados(Request $request)
+    {
+        try {
+
+            return response($request->all(), 200);
+
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+    }
+
 }
