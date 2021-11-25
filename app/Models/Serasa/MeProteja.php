@@ -183,8 +183,8 @@ class MeProteja
             $model = new ModelsMeproteja();
 
             $model->cliente         = $dados['cliente'];
-            $model->distribuidor    = $dados['cliente'];;
-            $model->json            = $dados['cliente'];;
+            $model->distribuidor    = $dados['distribuidor'];;
+            $model->json            = $dados['json'];;
             $model->status          = 0;
             $model->data_inclusao   = date("Y-m-d H:m:s");
 
