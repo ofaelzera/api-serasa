@@ -97,9 +97,6 @@ class Prorede
 
             $cnpj_client =   Serasa::getReplace($cliente->aCNPJ, 14);
 
-            //04833180000143
-            //04833180 0001 43
-
             $body = [
                 'tipoRegistro'              => Serasa::getSoNumeroZeroEsquerda(1, 3),
                 'cnpjIndireto'              => 0 . Serasa::getReplace($cliente->aCNPJ, 8),
@@ -145,4 +142,5 @@ class Prorede
             return ['error' => $th->getMessage(), 'code' => $th->getCode()];
         }
     }
+
 }
