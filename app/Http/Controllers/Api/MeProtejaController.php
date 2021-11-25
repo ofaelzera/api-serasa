@@ -233,10 +233,34 @@ class MeProtejaController extends Controller
     {
         try {
 
-            return response($request->all(), 200);
+            $request->validate([
+                'cliente'       => 'required',
+                'distribuidor'  => 'required',
+                'json'          => 'required',
+            ]);
+
+            $data = MeProteja::incluir_dados($request->all());
+
+            if(isset($data['error'])){
+                return response(
+                    [
+                        'error'     => 'Mensagem não incluida',
+                        'mensagem'  => $data
+                    ],
+                401);
+            }
+
+            return response(['success' => 'ok', 'data' => $data], 200);
 
         } catch (\Throwable $th) {
-            //throw $th;
+
+            return response(
+                [
+                    'error'     => 'Mensagem não incluida',
+                    'mensagem'  => $th->getMessage(),
+                    'code'      => $th->getCode()
+                ],
+                401);
         }
     }
 

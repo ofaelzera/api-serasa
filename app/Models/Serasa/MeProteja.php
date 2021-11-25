@@ -1,6 +1,9 @@
 <?php
 namespace App\Models\Serasa;
 
+use App\Models\Meproteja as ModelsMeproteja;
+use PhpParser\Node\Stmt\TryCatch;
+
 class MeProteja
 {
 
@@ -172,6 +175,32 @@ class MeProteja
         $result = Serasa::sendDadosSOAP('meproteja', 'ConsultarSocio', $aaaa, $aLogon);
 
         return $result;
+    }
+
+    public static function incluir_dados($dados)
+    {
+        try {
+            $model = new ModelsMeproteja();
+
+            $model->cliente         = $dados['cliente'];
+            $model->distribuidor    = $dados['cliente'];;
+            $model->json            = $dados['cliente'];;
+            $model->status          = 0;
+            $model->data_inclusao   = date("Y-m-d H:m:s");
+
+            if($model->save()){
+                return ['success' => 'Dados salvo com sucesso!'];
+            }else{
+                return ['error' => 'Ocorreu algum erro ao gravar os dados!'];
+            }
+
+        } catch (\Throwable $th) {
+            return [
+                'error'     => 'Ocorreu algum erro ao gravar os dados!',
+                'mensagem'  => $th->getMessage(),
+                'code'      => $th->getCode()
+            ];
+        }
     }
 
 }
