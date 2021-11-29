@@ -29,7 +29,7 @@ class ConMeProtejaRelatorio extends Model
     protected $connection   = 'mysql_2';
 	protected $table        = 'ConMeProtejaRelatorio';
     protected $primaryKey   = 'ID';
-	protected $timestamps      = true;
+	public $timestamps      = true;
 
 	protected $casts = [
 		'nStatus' => 'int'
