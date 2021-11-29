@@ -2,6 +2,7 @@
 namespace App\Models\Serasa;
 
 use App\Models\Meproteja as ModelsMeproteja;
+use App\Models\Positiva\ConMeProtejaRelatorio;
 use PhpParser\Node\Stmt\TryCatch;
 
 class MeProteja
@@ -180,6 +181,8 @@ class MeProteja
     public static function incluir_dados($dados)
     {
         try {
+
+            /*
             $model = new ModelsMeproteja();
 
             $model->cliente         = $dados['cliente'];
@@ -193,6 +196,22 @@ class MeProteja
             }else{
                 return ['error' => 'Ocorreu algum erro ao gravar os dados!'];
             }
+            */
+
+            $model = new ConMeProtejaRelatorio();
+
+            $model->aCliente        = $dados['cliente'];
+            $model->aDistribuidor   = $dados['distribuidor'];;
+            $model->aJson           = $dados['json'];;
+            $model->nStatus         = 0;
+            $model->dDataInclusao   = date("Y-m-d H:m:s");
+
+            if($model->save()){
+                return ['success' => 'Dados salvo com sucesso!'];
+            }else{
+                return ['error' => 'Ocorreu algum erro ao gravar os dados!'];
+            }
+
 
         } catch (\Throwable $th) {
             return [
