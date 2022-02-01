@@ -97,33 +97,35 @@ class Prorede
 
             $cnpj_client =   Serasa::getReplace($cliente->aCNPJ, 14);
 
-            $body = [
-                'tipoRegistro'              => Serasa::getSoNumeroZeroEsquerda(1, 3),
-                'cnpjIndireto'              => 0 . Serasa::getReplace($cliente->aCNPJ, 8),
-                'filialIndireto'            => substr($cnpj_client, 8, 4),
-                'digitoIndireto'            => substr($cnpj_client, 12, 2),
-                'razaoSocialIndireto'       => $cliente->aRazao,
-                'nomeFantasia'              => $cliente->aFantasia,
-                'enderecoIndireto'          => $cliente->aEndereco,
-                'bairro'                    => $cliente->aBairro,
-                'cep'                       => $cliente->nCEP,
-                'cidade'                    => $cidade->aMunicipio,
-                'uf'                        => $cidade->aUF,
-                'ddd'                       => Serasa::getSoNumeroZeroEsquerda($cliente->nDDD, 5),
-                'telefone'                  => Serasa::getSoNumeroZeroEsquerda($cliente->aFone, 9),
-                'ramal'                     => null,
-                'contato'                   => $cliente->aContato,
-                'agencia'                   => $cliente->nAgencia,
-                'contaCorrente'             => $cliente->nContaCorrente,
-                'email'                     => $cliente->aEmail,
-            ];
+            $body = \json_encode(
+                [
+                    'tipoRegistro'              => Serasa::getSoNumeroZeroEsquerda(1, 3),
+                    'cnpjIndireto'              => 0 . Serasa::getReplace($cliente->aCNPJ, 8),
+                    'filialIndireto'            => substr($cnpj_client, 8, 4),
+                    'digitoIndireto'            => substr($cnpj_client, 12, 2),
+                    'razaoSocialIndireto'       => $cliente->aRazao,
+                    'nomeFantasia'              => $cliente->aFantasia,
+                    'enderecoIndireto'          => $cliente->aEndereco,
+                    'bairro'                    => $cliente->aBairro,
+                    'cep'                       => $cliente->nCEP,
+                    'cidade'                    => $cidade->aMunicipio,
+                    'uf'                        => $cidade->aUF,
+                    'ddd'                       => Serasa::getSoNumeroZeroEsquerda($cliente->nDDD, 5),
+                    'telefone'                  => Serasa::getSoNumeroZeroEsquerda($cliente->aFone, 9),
+                    'ramal'                     => null,
+                    'contato'                   => $cliente->aContato,
+                    'agencia'                   => $cliente->nAgencia,
+                    'contaCorrente'             => $cliente->nContaCorrente,
+                    'email'                     => $cliente->aEmail,
+                ]
+                ,true);
 
             $res = $client->request('POST', $URL, [
                 'headers' => [
                     'content-type'  => 'application/json',
                     'Authorization' => 'Bearer ' . $Bearer['accessToken'],
                 ],
-                'body' => json_encode($body)
+                'body' => $body
             ]);
 
             if ($res->getStatusCode() == 200){
