@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Api\MeProtejaController;
 use App\Http\Controllers\Api\ConcentreController;
+use App\Http\Controllers\Api\CrednetController;
 use App\Http\Controllers\Api\MeAviseController;
 use App\Http\Controllers\Api\ProredeController;
 
@@ -57,6 +58,11 @@ Route::middleware('apiJwt')->group(function () {
     Route::prefix('prorede')->group(function () {
         Route::post('analyse_sales', [ProredeController::class, 'AnalyseSales']);
         Route::post('partners_orders', [ProredeController::class, 'PartnersOrders']);
+    });
+
+    Route::prefix('crednet')->group(function () {
+        Route::post('index', [CrednetController::class, 'index']);
+        Route::post('consulta/pessoa', [CrednetController::class, 'consulta_pessoa']);
     });
 
 });

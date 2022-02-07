@@ -174,7 +174,7 @@ class Serasa
 
 
     //FUNCTIONS UTIL SERASA
-    public static function montaRegistro($aArrayRetorno, &$aMsgErro=false, $fIgnoraObrigatoriedade=false)
+    public static function montaRegistro($aArrayRetorno, $aMsgErro=false, $fIgnoraObrigatoriedade=false)
     {
         $aRtn = "";
         $nSeq = 0;
