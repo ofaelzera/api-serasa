@@ -119,6 +119,6 @@ class ConContrato extends Model
 
     public function getClient()
 	{
-		return $this->belongsTo(ConCliente::class, 'ID', 'nIdCliente');
+		return $this->belongsTo(ConCliente::class, 'nIdCliente', 'ID');
 	}
 }

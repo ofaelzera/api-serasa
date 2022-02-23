@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Api\MeProtejaController;
 use App\Http\Controllers\Api\ConcentreController;
+use App\Http\Controllers\Api\ContratoController;
 use App\Http\Controllers\Api\CrednetController;
 use App\Http\Controllers\Api\MeAviseController;
 use App\Http\Controllers\Api\ProredeController;
@@ -63,6 +64,10 @@ Route::middleware('apiJwt')->group(function () {
     Route::prefix('crednet')->group(function () {
         Route::post('index', [CrednetController::class, 'index']);
         Route::post('consulta/pessoa', [CrednetController::class, 'consulta_pessoa']);
+    });
+
+    Route::prefix('contrato')->group(function () {
+        Route::get('getAllContrato', [ContratoController::class, 'getAllContrato']);
     });
 
 });

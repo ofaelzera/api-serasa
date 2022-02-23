@@ -2,6 +2,9 @@
 
 namespace App\Models\Serasa;
 
+use App\Models\Positiva\ConContrato;
+use App\Models\Crednet as CrednetModel;
+
 class Crednet
 {
     private static $PRODUCAO = true;
@@ -14,9 +17,11 @@ class Crednet
     public static function getUrl()
     {
         if(self::$PRODUCAO) {
-            return 'https://sitenet43.serasa.com.br/Prod/consultahttps';
+            //return 'https://sitenet43.serasa.com.br/Prod/consultahttps';
+            return 'https://sitenet43-2.serasa.com.br/Prod/consultahttps';
         }
-        return 'https://mqlinuxext.serasa.com.br/Homologa/consultahttps';
+        //return 'https://mqlinuxext.serasa.com.br/Homologa/consultahttps';
+        return 'https://mqlinuxext-2.serasa.com.br/Homologa/consultahttps';
     }
 
     public static function getAssinaturaDistribuidor()
@@ -66,7 +71,37 @@ class Crednet
         }
         //END BLOCO N02
 
+        //BLOCO N001
+        $aRtn .= self::getStDGetProtocoloN001($aConsulta);
+        //END BLOCO N001
+
+        //BLOCO N003
+        $aRtn .= self::getStDGetProtocoloN003($aConsulta);
+        //END BLOCO N003
+
         $aRtn .= 'T999';
+
+        $modelCrednet = new CrednetModel();
+        $modelCrednet->id_contrato      = $aConsulta["id_contrato"];
+        $modelCrednet->data_consulta    = date("Y-m-d H:i:s");
+        $modelCrednet->cnpj_consulta    = $aConsulta["cnpj_consulta"];
+        $modelCrednet->logon            = $aConsulta["logon"];
+        $modelCrednet->tipo_pessoa      = $aConsulta["tipo_pessoa"];
+        $modelCrednet->p002             = json_encode($aConsulta["P002"]);
+        $modelCrednet->n003             = json_encode($aConsulta["N003"]);
+        $modelCrednet->string_envio     = $aRtn;
+
+        if($modelCrednet->save()){
+            $aRtn = Serasa::sendDados([
+                'produto' => 'crednet',
+                'post'    => $aRtn,
+            ]);
+
+            $modelCrednet->string_retorno = $aRtn;
+            $modelCrednet->save();
+            return $aRtn;
+        }
+
         return $aRtn;
     }
 
@@ -79,8 +114,8 @@ class Crednet
             [ 'campo'=>'TIPOPESSOA',        'tipo'=>'X', 'tam'=>1,      'obrig'=>true, 'value'=>' ' ],          //04 - TIPÓ DE PESSOA J OU F
             [ 'campo'=>'BASECONS',          'tipo'=>'X', 'tam'=>6,      'obrig'=>true, 'value'=>'C' ],          //05 -
             [ 'campo'=>'MODALIDADE',        'tipo'=>'X', 'tam'=>2,      'obrig'=>true, 'value'=>'FI' ],         //06 -
-            [ 'campo'=>'VLRCONSUL',         'tipo'=>'X', 'tam'=>7,      'obrig'=>true, 'value'=>' ' ],          //07 -
-            [ 'campo'=>'CENTROCUST',        'tipo'=>'X', 'tam'=>12,     'obrig'=>true,'value'=>' ' ],           //08 -
+            [ 'campo'=>'VLRCONSUL',         'tipo'=>'N', 'tam'=>7,      'obrig'=>true, 'value'=>' ' ],          //07 -
+            [ 'campo'=>'CENTROCUST',        'tipo'=>'N', 'tam'=>12,     'obrig'=>true,'value'=>' ' ],           //08 -
             [ 'campo'=>'CODIFICADO',        'tipo'=>'X', 'tam'=>1,      'obrig'=>true, 'value'=>'N' ],          //09 -
             [ 'campo'=>'QTDREG',            'tipo'=>'N', 'tam'=>2,      'obrig'=>true, 'value'=>'99' ],         //10 -
             [ 'campo'=>'CONVERSA',          'tipo'=>'X', 'tam'=>1,      'obrig'=>true, 'value'=>'S' ],          //11 -
@@ -94,9 +129,9 @@ class Crednet
             [ 'campo'=>'PASSA',             'tipo'=>'X', 'tam'=>1,      'obrig'=>true, 'value'=>'D' ],          //19 -
             [ 'campo'=>'CONS_COLLEC',       'tipo'=>'X', 'tam'=>1,      'obrig'=>true, 'value'=>' ' ],          //20 -
             [ 'campo'=>'LOCALIZADOR',       'tipo'=>'X', 'tam'=>1,      'obrig'=>true, 'value'=>' ' ],          //21 - USO DO SERASA
-            [ 'campo'=>'DOC_CREDOR',        'tipo'=>'N', 'tam'=>9,      'obrig'=>true, 'value'=>' ' ],          //22 - USO DO SERASA
+            [ 'campo'=>'DOC_CREDOR',        'tipo'=>'X', 'tam'=>9,      'obrig'=>true, 'value'=>' ' ],          //22 - USO DO SERASA
             [ 'campo'=>'QTDE_CHEQU',        'tipo'=>'X', 'tam'=>2,      'obrig'=>true, 'value'=>' ' ],          //23 - USO DO SERASA
-            [ 'campo'=>'END_TEL',           'tipo'=>'X', 'tam'=>1,      'obrig'=>true, 'value'=>'N' ],          //24 -
+            [ 'campo'=>'END_TEL',           'tipo'=>'X', 'tam'=>1,      'obrig'=>true, 'value'=>'S' ],          //24 -
             [ 'campo'=>'QTDE_CHO_1',        'tipo'=>'X', 'tam'=>2,      'obrig'=>true, 'value'=>' ' ],          //25 - USO DO SERASA
             [ 'campo'=>'SCO_CHO_1',         'tipo'=>'X', 'tam'=>1,      'obrig'=>true, 'value'=>' ' ],          //26 - USO DO SERASA
             [ 'campo'=>'TAR_CHO_1',         'tipo'=>'X', 'tam'=>1,      'obrig'=>true, 'value'=>' ' ],          //27 - USO DO SERASA
@@ -108,14 +143,14 @@ class Crednet
             [ 'campo'=>'CTA_CORRENT',       'tipo'=>'X', 'tam'=>10,     'obrig'=>true, 'value'=>' ' ],          //32 - USO DO SERASA
             [ 'campo'=>'DG_CTA_CORR',       'tipo'=>'X', 'tam'=>1,      'obrig'=>true, 'value'=>' ' ],          //33 - USO DO SERASA
             [ 'campo'=>'AGENCIA',           'tipo'=>'X', 'tam'=>4,      'obrig'=>true, 'value'=>' ' ],          //34 - USO DO SERASA
-            [ 'campo'=>'ALERTA',            'tipo'=>'X', 'tam'=>1,      'obrig'=>true, 'value'=>' ' ],          //35 - USO DO SERASA
+            [ 'campo'=>'ALERTA',            'tipo'=>'X', 'tam'=>1,      'obrig'=>true, 'value'=>'S' ],          //35 - USO DO SERASA
             [ 'campo'=>'LOGON',             'tipo'=>'X', 'tam'=>8,      'obrig'=>true, 'value'=>' ' ],          //36 - LOGON DE ACESSO
             [ 'campo'=>'VIA_INTERNET',      'tipo'=>'X', 'tam'=>1,      'obrig'=>true, 'value'=>' ' ],          //37 - USO DO SERASA
             [ 'campo'=>'RESPOSTA',          'tipo'=>'X', 'tam'=>1,      'obrig'=>true, 'value'=>' ' ],          //38 - USO DO SERASA
             [ 'campo'=>'PERIODO_COMPRO',    'tipo'=>'X', 'tam'=>1,      'obrig'=>true, 'value'=>' ' ],          //39 - USO DO SERASA
             [ 'campo'=>'PERIODO_ENDERECO',  'tipo'=>'X', 'tam'=>1,      'obrig'=>true, 'value'=>' ' ],          //40 - USO DO SERASA
             [ 'campo'=>'BACKTEST',          'tipo'=>'X', 'tam'=>1,      'obrig'=>true, 'value'=>' ' ],          //41 - USO DO SERASA
-            [ 'campo'=>'DT_QUALITY',        'tipo'=>'X', 'tam'=>1,      'obrig'=>true, 'value'=>'N' ],          //42 -
+            [ 'campo'=>'DT_QUALITY',        'tipo'=>'X', 'tam'=>1,      'obrig'=>true, 'value'=>' ' ],          //42 -
             [ 'campo'=>'PRDORIGEM',         'tipo'=>'X', 'tam'=>2,      'obrig'=>true, 'value'=>' ' ],          //43 -
             [ 'campo'=>'TRNORIGEM',         'tipo'=>'X', 'tam'=>4,      'obrig'=>true, 'value'=>' ' ],          //44 -
             [ 'campo'=>'CONSULTANTE',       'tipo'=>'X', 'tam'=>15,     'obrig'=>true, 'value'=>' ' ],          //45 - CNPJ CONSULTANTE
@@ -162,10 +197,10 @@ class Crednet
         //INFORMA O TIPO DE PESSOA A SER CONSULTADA
             if($aConsulta['tipo_pessoa'] == 'F'){
                 $nIdx = Serasa::getIdxDadosEmParam($aOpcoes, 'TIPOPESSOA');
-                $aArrayRetorno[$nIdx]['value'] = 'F';
+                $aOpcoes[$nIdx]['value'] = 'F';
             }else if($aConsulta['tipo_pessoa'] == 'J'){
                 $nIdx = Serasa::getIdxDadosEmParam($aOpcoes, 'TIPOPESSOA');
-                $aArrayRetorno[$nIdx]['value'] = 'F';
+                $aOpcoes[$nIdx]['value'] = 'F';
             }
         //END
 
@@ -181,7 +216,8 @@ class Crednet
 
         //SETA O NUMERO DO CNPJ DO CONSULTANTE
             $nIdx = Serasa::getIdxDadosEmParam($aOpcoes, 'CONSULTANTE');
-            $aOpcoes[$nIdx]['value'] = Serasa::getSoNumeroZeroEsquerda($aConsulta['cnpj_consultante'], $aOpcoes[$nIdx]['tam']) ;
+            $CNPJ = ConContrato::find($aConsulta['id_contrato'])->getClient->aCNPJ;
+            $aOpcoes[$nIdx]['value'] = Serasa::getSoNumeroZeroEsquerda($CNPJ, $aOpcoes[$nIdx]['tam']) ;
         //END
 
         return Serasa::montaRegistro($aOpcoes, false, true);
@@ -235,14 +271,14 @@ class Crednet
         $aOpcoes = [
             [ 'campo'=>'TPREG',         'tipo'=>'X', 'tam'=>4,      'obrig'=>true, 'value'=>'N001'],    //01 -
             [ 'campo'=>'SUBTP',         'tipo'=>'X', 'tam'=>2,      'obrig'=>true, 'value'=>'00'],      //02 -
-            [ 'campo'=>'TP_CONS',       'tipo'=>'N', 'tam'=>2,      'obrig'=>true, 'value'=>'PP'],      //03 -
+            [ 'campo'=>'TP_CONS',       'tipo'=>'X', 'tam'=>2,      'obrig'=>true, 'value'=>'PP'],      //03 -
             [ 'campo'=>'TRANS_CONS',    'tipo'=>'X', 'tam'=>4,      'obrig'=>true, 'value'=>'X21P'],    //04 -
-            [ 'campo'=>'SOL_GDE_VAR',   'tipo'=>'X', 'tam'=>1,      'obrig'=>true, 'value'=>'N'],       //05 -
+            [ 'campo'=>'SOL_GDE_VAR',   'tipo'=>'X', 'tam'=>1,      'obrig'=>true, 'value'=>' '],       //05 -
             [ 'campo'=>'ID_CHEQUE',     'tipo'=>'X', 'tam'=>1,      'obrig'=>true, 'value'=>'0'],       //06 -
             [ 'campo'=>'AGRUPA',        'tipo'=>'X', 'tam'=>1,      'obrig'=>true, 'value'=>' '],       //07 -
             [ 'campo'=>'CONS_SINT',     'tipo'=>'X', 'tam'=>1,      'obrig'=>true, 'value'=>' '],       //08 -
             [ 'campo'=>'RESERVADO',     'tipo'=>'X', 'tam'=>1,      'obrig'=>true, 'value'=>' '],       //09 - USO DO SERASA
-            [ 'campo'=>'ANOT_RESUM',    'tipo'=>'N', 'tam'=>1,      'obrig'=>true, 'value'=>' '],       //10 -
+            [ 'campo'=>'ANOT_RESUM',    'tipo'=>'X', 'tam'=>1,      'obrig'=>true, 'value'=>' '],       //10 -
             [ 'campo'=>'CHAVE_CONS',    'tipo'=>'X', 'tam'=>6,      'obrig'=>true, 'value'=>' '],       //11 -
             [ 'campo'=>'FANTASIA',      'tipo'=>'X', 'tam'=>12,     'obrig'=>true, 'value'=>' '],       //12 -
             [ 'campo'=>'STATUS_BCO',    'tipo'=>'X', 'tam'=>1,      'obrig'=>true, 'value'=>' '],       //13 -
@@ -252,6 +288,8 @@ class Crednet
             [ 'campo'=>'SITUACAO',      'tipo'=>'X', 'tam'=>1,      'obrig'=>true, 'value'=>' '],       //17 -
             [ 'campo'=>'FILLER_2',      'tipo'=>'X', 'tam'=>62,     'obrig'=>true, 'value'=>' '],       //18 - USO DO SERASA
         ];
+
+        return Serasa::montaRegistro($aOpcoes, false, true);
     }
 
     private static function getStDGetProtocoloN002_00($aConsulta)
@@ -260,7 +298,7 @@ class Crednet
             [ 'campo'=>'TPREG',         'tipo'=>'X', 'tam'=>4,      'obrig'=>true, 'value'=>'N002'],    //01 -
             [ 'campo'=>'SUBTP',         'tipo'=>'X', 'tam'=>2,      'obrig'=>true, 'value'=>'00'],      //02 -
             [ 'campo'=>'BANCO',         'tipo'=>'X', 'tam'=>3,      'obrig'=>true, 'value'=>' '],       //02 -
-            [ 'campo'=>'AGENCIA',       'tipo'=>'N', 'tam'=>4,      'obrig'=>true, 'value'=>' '],       //03 -
+            [ 'campo'=>'AGENCIA',       'tipo'=>'X', 'tam'=>4,      'obrig'=>true, 'value'=>' '],       //03 -
             [ 'campo'=>'CONTA_COR',     'tipo'=>'X', 'tam'=>15,     'obrig'=>true, 'value'=>' '],       //04 -
             [ 'campo'=>'CHQ_INI',       'tipo'=>'X', 'tam'=>6,      'obrig'=>true, 'value'=>' '],       //05 -
             [ 'campo'=>'DG_CHQ_INI',    'tipo'=>'X', 'tam'=>1,      'obrig'=>true, 'value'=>' '],       //07 -
@@ -268,7 +306,7 @@ class Crednet
             [ 'campo'=>'DG_CHQ_FIM',    'tipo'=>'X', 'tam'=>1,      'obrig'=>true, 'value'=>' '],       //09 -
             [ 'campo'=>'CMC7_INI',      'tipo'=>'X', 'tam'=>30,     'obrig'=>true, 'value'=>' '],       //10 -
             [ 'campo'=>'CMC7_FIM',      'tipo'=>'X', 'tam'=>30,     'obrig'=>true, 'value'=>' '],       //11 -
-            [ 'campo'=>'FILLER_0',      'tipo'=>'N', 'tam'=>13,     'obrig'=>true, 'value'=>' '],       //12 - USO DO SERASA
+            [ 'campo'=>'FILLER_0',      'tipo'=>'X', 'tam'=>13,     'obrig'=>true, 'value'=>' '],       //12 - USO DO SERASA
         ];
     }
 
@@ -289,12 +327,25 @@ class Crednet
             [ 'campo'=>'TPREG',         'tipo'=>'X', 'tam'=>4,      'obrig'=>true, 'value'=>'N003'],    //01 -
             [ 'campo'=>'SUBTP',         'tipo'=>'X', 'tam'=>2,      'obrig'=>true, 'value'=>'00'],      //02 -
             [ 'campo'=>'DDD',           'tipo'=>'X', 'tam'=>4,      'obrig'=>true, 'value'=>' '],       //02 -
-            [ 'campo'=>'TELEFONE',      'tipo'=>'N', 'tam'=>8,      'obrig'=>true, 'value'=>' '],       //03 -
+            [ 'campo'=>'TELEFONE',      'tipo'=>'X', 'tam'=>8,      'obrig'=>true, 'value'=>' '],       //03 -
             [ 'campo'=>'CEP',           'tipo'=>'X', 'tam'=>9,      'obrig'=>true, 'value'=>' '],       //04 -
             [ 'campo'=>'UF',            'tipo'=>'X', 'tam'=>2,      'obrig'=>true, 'value'=>' '],       //05 -
-            [ 'campo'=>'FEAT_SCOR',     'tipo'=>'X', 'tam'=>4,      'obrig'=>true, 'value'=>' '],       //07 -
+            [ 'campo'=>'FEAT_SCOR',     'tipo'=>'X', 'tam'=>80,      'obrig'=>true, 'value'=>' '],       //07 -
             [ 'campo'=>'FILLER_0',      'tipo'=>'X', 'tam'=>6,      'obrig'=>true, 'value'=>' '],       //06 - USO DO SERASA
         ];
+
+        $nIdx = Serasa::getIdxDadosEmParam($aOpcoes, 'UF');
+        $aOpcoes[$nIdx]['value'] = $aConsulta["estado"];
+
+        $rtn = '';
+        foreach ($aConsulta['N003'] as $feat) {
+            $rtn .= $feat;
+        }
+
+        $nIdx = Serasa::getIdxDadosEmParam($aOpcoes, 'FEAT_SCOR');
+        $aOpcoes[$nIdx]['value'] = $rtn;
+
+        return Serasa::montaRegistro($aOpcoes, false, true);
     }
 
 }
