@@ -40,7 +40,7 @@ class Crednet
         return $aRtn;
     }
 
-    public static function getConsultaCredNet($aConsulta)
+    public static function getConsultaCredNet_($aConsulta)
     {
         //BLOCO N01
         $aRtn = self::getStDGetProtocoloB49C($aConsulta);
@@ -100,19 +100,22 @@ class Crednet
             ]);
 
             $aRtn = self::getArrayRetorno($aRtn);
-
             $modelCrednet->string_retorno = $aRtn;
             $modelCrednet->save();
         }
 
+        $aRtn = self::getTrataRetornoArray($aRtn);
         return $aRtn;
+
     }
 
-    public static function getConsultaCredNet_EXT($aConsulta){
+    public static function getConsultaCredNet($aConsulta){
 
-        $modelCrednet = CrednetModel::find(14);
+        $modelCrednet = CrednetModel::find(17);
         $aRtn = json_decode($modelCrednet->string_retorno, true);
         $aRtn = self::getTrataRetornoArray($aRtn);
+
+        return $aRtn;
 
     }
 
@@ -263,7 +266,15 @@ class Crednet
                     $aOpcoes[$nIdx]['value'] = 'REHM';
                     $nIdx = Serasa::getIdxDadosEmParam($aOpcoes, 'CHAVE'.$i);
                     $aOpcoes[$nIdx]['value'] = 'HSPN';
-                }else{
+                }else
+                if($feature == 'NRF3C66M'){
+                    $nIdx = Serasa::getIdxDadosEmParam($aOpcoes, 'COD'.$i);
+                    $aOpcoes[$nIdx]['value'] = 'NRF3';
+                    $nIdx = Serasa::getIdxDadosEmParam($aOpcoes, 'CHAVE'.$i);
+                    $aOpcoes[$nIdx]['value'] = 'C66M';
+                }
+                else
+                {
                     $nIdx = Serasa::getIdxDadosEmParam($aOpcoes, 'COD'.$i);
                     $aOpcoes[$nIdx]['value'] = $feature;
                 }
@@ -441,6 +452,88 @@ class Crednet
     }
 
     //TRATA RETORNO
+    private static function getRetorno_B370($aArr)
+    {
+        $aArrayRetorno = [];
+        $i=0;
+
+        foreach($aArr as $Arr){
+
+            $Arr = " ".$Arr;
+            $subtipo = rtrim(substr($Arr, 5, 1), " ");
+
+            if($subtipo == "0"){
+                $aArrayRetorno[$i]['TPREG']  = rtrim(substr($Arr, 1, 4), " ");
+                $aArrayRetorno[$i]['SUBTP']  = rtrim(substr($Arr, 5, 1), " ");
+
+                $aArrayRetorno[$i]['DDD']       = rtrim(substr($Arr, 6, 3), " ");
+                $aArrayRetorno[$i]['FONE']      = rtrim(substr($Arr, 9, 9), " ");
+                $aArrayRetorno[$i]['ENDERECO']  = rtrim(substr($Arr, 18, 70), " ");
+                $aArrayRetorno[$i]['BAIRRO ']   = rtrim(substr($Arr, 88, 20), " ");
+                $aArrayRetorno[$i]['CEP']       = rtrim(substr($Arr, 108, 8), " ");
+            }else
+            if($subtipo == "1"){
+                $aArrayRetorno[$i]['TPREG']  = rtrim(substr($Arr, 1, 4), " ");
+                $aArrayRetorno[$i]['SUBTP']  = rtrim(substr($Arr, 5, 1), " ");
+
+                $aArrayRetorno[$i]['CIDADE']    = rtrim(substr($Arr, 6, 30), " ");
+                $aArrayRetorno[$i]['UF']        = rtrim(substr($Arr, 36, 2), " ");
+                $aArrayRetorno[$i]['NOME']      = rtrim(substr($Arr, 38, 50), " ");
+                $aArrayRetorno[$i]['DATA ']     = rtrim(substr($Arr, 88, 8), " ");
+                $aArrayRetorno[$i]['FILLER']    = rtrim(substr($Arr, 96, 20), " ");
+            }
+            $i++;
+        }
+
+        return $aArrayRetorno;
+    }
+
+    private static function getRetorno_C210($aArr)
+    {
+        $aArrayRetorno = [];
+        $i=0;
+
+        foreach($aArr as $Arr){
+
+            $Arr = " ".$Arr;
+            $subtipo = rtrim(substr($Arr, 5, 1), " ");
+
+            if($subtipo == "1"){
+                $aArrayRetorno[$i]['TPREG']  = rtrim(substr($Arr, 1, 4), " ");
+                $aArrayRetorno[$i]['SUBTP']  = rtrim(substr($Arr, 5, 1), " ");
+
+                $aArrayRetorno[$i]['SEQ_END']   = rtrim(substr($Arr, 6, 2), " ");
+                $aArrayRetorno[$i]['LOGRAD']    = rtrim(substr($Arr, 8, 60), " ");
+                $aArrayRetorno[$i]['NUM_END']   = rtrim(substr($Arr, 68, 6), " ");
+                $aArrayRetorno[$i]['COMP_END']  = rtrim(substr($Arr, 74, 40), " ");
+                $aArrayRetorno[$i]['FILLER']    = rtrim(substr($Arr, 114, 2), " ");
+            }else
+            if($subtipo == "2"){
+                $aArrayRetorno[$i]['TPREG']  = rtrim(substr($Arr, 1, 4), " ");
+                $aArrayRetorno[$i]['SUBTP']  = rtrim(substr($Arr, 5, 1), " ");
+
+                $aArrayRetorno[$i]['SEQ_END'] = rtrim(substr($Arr, 6, 2), " ");
+                $aArrayRetorno[$i]['BAIRRO']  = rtrim(substr($Arr, 8, 30), " ");
+                $aArrayRetorno[$i]['FILLER']  = rtrim(substr($Arr, 38, 78), " ");
+            }else
+            if($subtipo == "3"){
+                $aArrayRetorno[$i]['TPREG']  = rtrim(substr($Arr, 1, 4), " ");
+                $aArrayRetorno[$i]['SUBTP']  = rtrim(substr($Arr, 5, 1), " ");
+
+                $aArrayRetorno[$i]['SEQ_END']   = rtrim(substr($Arr, 6, 2), " ");
+                $aArrayRetorno[$i]['MUNICIP']   = rtrim(substr($Arr, 8, 30), " ");
+                $aArrayRetorno[$i]['CEP']       = rtrim(substr($Arr, 38, 8), " ");
+                $aArrayRetorno[$i]['UF']        = rtrim(substr($Arr, 46, 2), " ");
+                $aArrayRetorno[$i]['DDD']       = rtrim(substr($Arr, 48, 4), " ");
+                $aArrayRetorno[$i]['TELEFONE']  = rtrim(substr($Arr, 52, 9), " ");
+                $aArrayRetorno[$i]['FILLER']    = rtrim(substr($Arr, 61, 55), " ");
+            }
+            $i++;
+        }
+
+        return $aArrayRetorno;
+    }
+
     private static function getRetorno_N200($aArr)
     {
         $aArrayRetorno = [];
@@ -458,7 +551,7 @@ class Crednet
                 $aArrayRetorno[$i]['NOME_RAZAO']    = rtrim(substr($Arr, 7, 70), " ");
                 $aArrayRetorno[$i]['DT_NASC_FUND']  = rtrim(substr($Arr, 77, 8), " ");
                 $aArrayRetorno[$i]['SIT_DOCTO']     = rtrim(substr($Arr, 85, 2), " ");
-                $aArrayRetorno[$i]['DT_SIT_DOCTO '] = rtrim(substr($Arr, 87, 8), " ");
+                $aArrayRetorno[$i]['DT_SIT_DOCTO'] = rtrim(substr($Arr, 87, 8), " ");
                 $aArrayRetorno[$i]['CCF_IND']       = rtrim(substr($Arr, 95, 1), " ");
                 $aArrayRetorno[$i]['FILLER']        = rtrim(substr($Arr, 96, 20), " ");
             }else
@@ -812,6 +905,49 @@ class Crednet
 
                 $aArrayRetorno['nada_consta'][$i_99]['MSG_R440']  = rtrim(substr($Arr, 7, 40), " ");
                 $aArrayRetorno['nada_consta'][$i_99]['FILLER']    = rtrim(substr($Arr, 47, 69), " ");
+                $i_99 ++;
+            }
+        }
+
+        return $aArrayRetorno;
+    }
+
+    private static function getRetorno_N505($aArr)
+    {
+        $aArrayRetorno = [];
+        $i_00 = 0;
+        $i_01 = 0;
+        $i_99 = 0;
+
+        foreach($aArr as $Arr){
+
+            $Arr = " ".$Arr;
+            $subtipo = rtrim(substr($Arr, 5, 2), " ");
+
+            if($subtipo == "00"){
+                $aArrayRetorno['alerta_de_identidade'][$i_00]['TPREG']      = rtrim(substr($Arr, 1, 4), " ");
+                $aArrayRetorno['alerta_de_identidade'][$i_00]['SUBTP']      = rtrim(substr($Arr, 5, 2), " ");
+                $aArrayRetorno['alerta_de_identidade'][$i_00]['COD SCORE']  = rtrim(substr($Arr, 7, 4), " ");
+                $aArrayRetorno['alerta_de_identidade'][$i_00]['MENSAGEM']   = rtrim(substr($Arr, 11, 100), " ");
+                $aArrayRetorno['alerta_de_identidade'][$i_00]['FILLER']     = rtrim(substr($Arr, 111, 5), " ");
+
+                $i_00 ++;
+            }else
+            if($subtipo == "01"){
+                $aArrayRetorno['complemento'][$i_01]['TPREG']  = rtrim(substr($Arr, 1, 4), " ");
+                $aArrayRetorno['complemento'][$i_01]['SUBTP']  = rtrim(substr($Arr, 5, 2), " ");
+                $aArrayRetorno['complemento'][$i_01]['SEQUENCIA']   = rtrim(substr($Arr, 7, 2), " ");
+                $aArrayRetorno['complemento'][$i_01]['MENSAGEM']    = rtrim(substr($Arr, 9, 100), " ");
+                $aArrayRetorno['complemento'][$i_01]['FILLER']      = rtrim(substr($Arr, 109, 7), " ");
+
+                $i_01 ++;
+            }else
+            if($subtipo == "99"){
+                $aArrayRetorno['nada_consta'][$i_99]['TPREG']       = rtrim(substr($Arr, 1, 4), " ");
+                $aArrayRetorno['nada_consta'][$i_99]['SUBTP']       = rtrim(substr($Arr, 5, 2), " ");
+                $aArrayRetorno['nada_consta'][$i_99]['COD_SCORE']   = rtrim(substr($Arr, 7, 4), " ");
+                $aArrayRetorno['nada_consta'][$i_99]['MENSAGEM']    = rtrim(substr($Arr, 11, 100), " ");
+                $aArrayRetorno['nada_consta'][$i_99]['FILLER']      = rtrim(substr($Arr, 111, 5), " ");
                 $i_99 ++;
             }
         }
@@ -1322,6 +1458,192 @@ class Crednet
             $aArrayRetorno['DATA']      = rtrim(substr($Arr, 12, 8), " ");
             $aArrayRetorno['HORA']      = rtrim(substr($Arr, 20, 8), " ");
             $aArrayRetorno['MSG']       = rtrim(substr($Arr, 28, 88), " ");
+        }
+
+        return $aArrayRetorno;
+    }
+
+    private static function getRetorno_F900_REIC($aArr)
+    {
+        $aArrayRetorno = [];
+        $Arr = " ".$aArr;
+        $subtipo = rtrim(substr($Arr, 9, 1), " ");
+
+        if($subtipo == "0"){
+            $aArrayRetorno['TIPO_REG']  = rtrim(substr($Arr, 1, 4), " ");
+            $aArrayRetorno['COD_CONS']  = rtrim(substr($Arr, 5, 4), " ");
+            $aArrayRetorno['SUB_TIP']   = rtrim(substr($Arr, 9, 1), " ");
+
+            $aArrayRetorno['MENSAGEM']  = rtrim(substr($Arr, 10, 70), " ");
+            $aArrayRetorno['FILLER']    = rtrim(substr($Arr, 80, 36), " ");
+        }else
+        if($subtipo == "1"){
+            $aArrayRetorno['TIPO_REG']  = rtrim(substr($Arr, 1, 4), " ");
+            $aArrayRetorno['COD_CONS']  = rtrim(substr($Arr, 5, 4), " ");
+            $aArrayRetorno['SUB_TIP']   = rtrim(substr($Arr, 9, 1), " ");
+
+            $aArrayRetorno['PONTUACAO'] = rtrim(substr($Arr, 10, 4), " ");
+            $aArrayRetorno['CLASSE']    = rtrim(substr($Arr, 14, 1), " ");
+            $aArrayRetorno['MENSAGEM']  = rtrim(substr($Arr, 15, 80), " ");
+            $aArrayRetorno['FILLER']    = rtrim(substr($Arr, 95, 21), " ");
+        }
+
+        return $aArrayRetorno;
+    }
+
+    private static function getRetorno_F900_REHM($aArr)
+    {
+        $aArrayRetorno = [];
+        $Arr = " ".$aArr;
+
+        $aArrayRetorno['TIPO_REG']  = rtrim(substr($Arr, 1, 4), " ");
+        $aArrayRetorno['COD_CONS']  = rtrim(substr($Arr, 5, 4), " ");
+        $aArrayRetorno['SCORE']     = rtrim(substr($Arr, 9, 6), " ");
+        $aArrayRetorno['RANGE']     = rtrim(substr($Arr, 15, 6), " ");
+        $aArrayRetorno['TAXA']      = rtrim(substr($Arr, 21, 5), " ");
+        $aArrayRetorno['MENSAGEM']  = rtrim(substr($Arr, 26, 49), " ");
+        $aArrayRetorno['CODIGO_M']  = rtrim(substr($Arr, 75, 6), " ");
+        $aArrayRetorno['FILLER']    = rtrim(substr($Arr, 81, 35), " ");
+
+        return $aArrayRetorno;
+    }
+
+    private static function getRetorno_F900_REPG($aArr)
+    {
+        $aArrayRetorno = [];
+        $Arr = " ".$aArr;
+        $subtipo = rtrim(substr($Arr, 9, 1), " ");
+
+        if($subtipo == "0"){
+            $aArrayRetorno['TIPO_REG']  = rtrim(substr($Arr, 1, 4), " ");
+            $aArrayRetorno['COD_CONS']  = rtrim(substr($Arr, 5, 4), " ");
+            $aArrayRetorno['SUB_TIP']   = rtrim(substr($Arr, 9, 1), " ");
+
+            $aArrayRetorno['MENSAGEM']  = rtrim(substr($Arr, 10, 70), " ");
+            $aArrayRetorno['FILLER']    = rtrim(substr($Arr, 80, 36), " ");
+        }else
+        if($subtipo == "1"){
+            $aArrayRetorno['TIPO_REG']  = rtrim(substr($Arr, 1, 4), " ");
+            $aArrayRetorno['COD_CONS']  = rtrim(substr($Arr, 5, 4), " ");
+            $aArrayRetorno['SUB_TIP']   = rtrim(substr($Arr, 9, 1), " ");
+
+            $aArrayRetorno['PRINAD']    = rtrim(substr($Arr, 10, 16), " ");
+            $aArrayRetorno['FILLER']    = rtrim(substr($Arr, 26, 90), " ");
+        }
+
+        return $aArrayRetorno;
+    }
+
+    private static function getRetorno_F900_RERD($aArr)
+    {
+        $aArrayRetorno = [];
+        $Arr = " ".$aArr;
+        $subtipo = rtrim(substr($Arr, 9, 1), " ");
+
+        if($subtipo == "0"){
+            $aArrayRetorno['TIPO_REG']  = rtrim(substr($Arr, 1, 4), " ");
+            $aArrayRetorno['COD_CONS']  = rtrim(substr($Arr, 5, 4), " ");
+            $aArrayRetorno['SUB_TIP']   = rtrim(substr($Arr, 9, 1), " ");
+
+            $aArrayRetorno['MENSAGEM']  = rtrim(substr($Arr, 10, 70), " ");
+            $aArrayRetorno['FILLER']    = rtrim(substr($Arr, 80, 36), " ");
+        }else
+        if($subtipo == "1"){
+            $aArrayRetorno['TIPO_REG']  = rtrim(substr($Arr, 1, 4), " ");
+            $aArrayRetorno['COD_CONS']  = rtrim(substr($Arr, 5, 4), " ");
+            $aArrayRetorno['SUB_TIP']   = rtrim(substr($Arr, 9, 1), " ");
+
+            $aArrayRetorno['PERCENT_1']     = rtrim(substr($Arr, 10, 16), " ");
+            $aArrayRetorno['RENDA']         = rtrim(substr($Arr, 19, 9), " ");
+            $aArrayRetorno['PERCENT_99']    = rtrim(substr($Arr, 28, 9), " ");
+            $aArrayRetorno['FILLER']        = rtrim(substr($Arr, 37, 79), " ");
+        }
+
+        return $aArrayRetorno;
+    }
+
+    private static function getRetorno_F900_RETM($aArr)
+    {
+        $aArrayRetorno = [];
+        $Arr = " ".$aArr;
+        $subtipo = rtrim(substr($Arr, 9, 1), " ");
+
+        if($subtipo == "0"){
+            $aArrayRetorno['TIPO_REG']  = rtrim(substr($Arr, 1, 4), " ");
+            $aArrayRetorno['COD_CONS']  = rtrim(substr($Arr, 5, 4), " ");
+            $aArrayRetorno['SUB_TIP']   = rtrim(substr($Arr, 9, 1), " ");
+
+            $aArrayRetorno['MENSAGEM']  = rtrim(substr($Arr, 10, 70), " ");
+            $aArrayRetorno['FILLER']    = rtrim(substr($Arr, 80, 36), " ");
+        }else
+        if($subtipo == "1"){
+            $aArrayRetorno['TIPO_REG']  = rtrim(substr($Arr, 1, 4), " ");
+            $aArrayRetorno['COD_CONS']  = rtrim(substr($Arr, 5, 4), " ");
+            $aArrayRetorno['SUB_TIP']   = rtrim(substr($Arr, 9, 1), " ");
+
+            $aArrayRetorno['PRINAD']    = rtrim(substr($Arr, 10, 6), " ");
+            $aArrayRetorno['FILLER']    = rtrim(substr($Arr, 15, 101), " ");
+        }
+
+        return $aArrayRetorno;
+    }
+
+    private static function getRetorno_F900_RMF9($aArr)
+    {
+        $aArrayRetorno = [];
+        $Arr = " ".$aArr;
+
+        $aArrayRetorno['TIPO_REG']  = rtrim(substr($Arr, 1, 4), " ");
+        $aArrayRetorno['COD_CONS']  = rtrim(substr($Arr, 5, 4), " ");
+        $aArrayRetorno['FAIXA']     = rtrim(substr($Arr, 9, 2), " ");
+        $aArrayRetorno['CALCULADO'] = rtrim(substr($Arr, 11, 1), " ");
+        $aArrayRetorno['MENSAGEM']  = rtrim(substr($Arr, 12, 78), " ");
+        $aArrayRetorno['SETOR']     = rtrim(substr($Arr, 90, 2), " ");
+        $aArrayRetorno['FILLER']    = rtrim(substr($Arr, 92, 24), " ");
+
+        return $aArrayRetorno;
+    }
+
+    private static function getRetorno_F900_REDC($aArr)
+    {
+        $aArrayRetorno = [];
+        $Arr = " ".$aArr;
+        $subtipo = rtrim(substr($Arr, 9, 3), " ");
+
+        if($subtipo == "001"){
+            $aArrayRetorno['TIPO_REG']  = rtrim(substr($Arr, 1, 4), " ");
+            $aArrayRetorno['COD_CONS']  = rtrim(substr($Arr, 5, 4), " ");
+            $aArrayRetorno['SUB_TIP']   = rtrim(substr($Arr, 9, 3), " ");
+
+            $aArrayRetorno['GRAU_APV']  = rtrim(substr($Arr, 12, 2), " ");
+            $aArrayRetorno['MENS_APV1'] = rtrim(substr($Arr, 14, 102), " ");
+        }else
+        if($subtipo == "002"){
+            $aArrayRetorno['TIPO_REG']  = rtrim(substr($Arr, 1, 4), " ");
+            $aArrayRetorno['COD_CONS']  = rtrim(substr($Arr, 5, 4), " ");
+            $aArrayRetorno['SUB_TIP']   = rtrim(substr($Arr, 9, 3), " ");
+
+            $aArrayRetorno['MENS_APV1'] = rtrim(substr($Arr, 12, 48), " ");
+            $aArrayRetorno['FILLER']    = rtrim(substr($Arr, 60, 56), " ");
+        }else
+        if($subtipo == "003"){
+            $aArrayRetorno['TIPO_REG']  = rtrim(substr($Arr, 1, 4), " ");
+            $aArrayRetorno['COD_CONS']  = rtrim(substr($Arr, 5, 4), " ");
+            $aArrayRetorno['SUB_TIP']   = rtrim(substr($Arr, 9, 3), " ");
+
+            $aArrayRetorno['FLAG_APV_REPR'] = rtrim(substr($Arr, 12, 1), " ");
+            $aArrayRetorno['COD_APV_REPR']  = rtrim(substr($Arr, 13, 2), " ");
+            $aArrayRetorno['MENS_APV_REPR'] = rtrim(substr($Arr, 15, 90), " ");
+            $aArrayRetorno['QTDE']          = rtrim(substr($Arr, 105, 3), " ");
+            $aArrayRetorno['FILLER']        = rtrim(substr($Arr, 108, 8), " ");
+        }else
+        if($subtipo == "099"){
+            $aArrayRetorno['TIPO_REG']  = rtrim(substr($Arr, 1, 4), " ");
+            $aArrayRetorno['COD_CONS']  = rtrim(substr($Arr, 5, 4), " ");
+            $aArrayRetorno['SUB_TIP']   = rtrim(substr($Arr, 9, 3), " ");
+
+            $aArrayRetorno['MENSAGEM']  = rtrim(substr($Arr, 12, 80), " ");
+            $aArrayRetorno['FILLER']    = rtrim(substr($Arr, 92, 24), " ");
         }
 
         return $aArrayRetorno;
