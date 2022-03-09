@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class Crednet
- * 
+ *
  * @property int $id
  * @property int|null $id_contrato
  * @property Carbon|null $data_consulta
