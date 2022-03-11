@@ -121,7 +121,7 @@ class Prorede
                 ]
                 ,true);
 
-            dd($body);
+            return dd($body);
 
             $res = $client->request('POST', $URL, [
                 'headers' => [
