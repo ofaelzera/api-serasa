@@ -33,6 +33,8 @@ class ProredeController extends Controller
             'n_conttrato'   => 'required',
         ]);
 
+        dd($request->all());
+
         $data =  Prorede::getPartnersOrders($request->all());
 
         if(isset($data['error'])){

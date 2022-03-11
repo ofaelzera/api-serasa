@@ -121,8 +121,6 @@ class Prorede
                 ]
                 ,true);
 
-            return dd($body);
-
             $res = $client->request('POST', $URL, [
                 'headers' => [
                     'content-type'  => 'application/json',
