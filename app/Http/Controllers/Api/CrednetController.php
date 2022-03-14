@@ -49,8 +49,8 @@ class CrednetController extends Controller
     public function consulta_pessoa(Request $request)
     {
         $dados = $request->all();
-        //$consulta = Crednet::getConsultaCredNet($dados);
-        $consulta = Crednet::getConsultaCredNet_($dados);
+        $consulta = Crednet::getConsultaCredNet($dados);
+        //$consulta = Crednet::getConsultaCredNet_($dados);
 
         if($consulta['success'] == true){
             return response(['success' => $consulta['data']], 200);
