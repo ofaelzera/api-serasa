@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AceiteController;
 use App\Http\Controllers\Api\ClientsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -68,6 +69,10 @@ Route::middleware('apiJwt')->group(function () {
 
     Route::prefix('contrato')->group(function () {
         Route::get('getAllContrato', [ContratoController::class, 'getAllContrato']);
+    });
+
+    Route::prefix('aceite')->group(function () {
+        Route::post('setAceiteEletronico', [AceiteController::class, 'setAceiteEletronico']);
     });
 
 });
