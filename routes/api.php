@@ -73,6 +73,7 @@ Route::middleware('apiJwt')->group(function () {
 
     Route::prefix('aceite')->group(function () {
         Route::post('setAceiteEletronico', [AceiteController::class, 'setAceiteEletronico']);
+        Route::post('getAceiteEletronico', [AceiteController::class, 'getAceiteEletronico']);
     });
 
 });

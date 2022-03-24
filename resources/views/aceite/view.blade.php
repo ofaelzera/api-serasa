@@ -232,6 +232,11 @@
             width: 100%;
             object-fit: cover
         }
+        .kbw-signature {
+            width: 500px;
+            height: 200px;
+            border: 1px solid #ccc;
+        }
     </style>
 </head>
 <body>
@@ -284,31 +289,14 @@
                         </fieldset>
                         <fieldset>
                             <div class="row">
-                                <div class="col-md-2"></div>
-                                <div class="col-md-8">
-                                    <div class="sigPad">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <p class="drawItDesc">Desenhe sua assinatura</p>
-                                                <ul class="sigNav">
-                                                    <li class="clearButton">
-                                                        <a href="#clear">Limpar</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-12">
-                                                <div class="sig sigWrapper" style="text-align: center;">
-                                                    <div class="typed"></div>
-                                                    <canvas class="pad" width="580" height="250"></canvas>
-                                                    <input type="hidden" name="output" class="output">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                <div class="col-md-3">
                                 </div>
-                                <div class="col-md-2"></div>
+                                <div class="col-md-6">
+                                    <h3>Assine aqui!</h3>
+                                    <div id="sig"></div>
+                                </div>
+                                <div class="col-md-3">
+                                </div>
                             </div>
                             <input type="button" name="next" class="next action-button" id="submit" value="Assinar" />
                             <input type="button" name="previous" class="previous action-button-previous" value="Voltar" />
@@ -316,24 +304,15 @@
                         <fieldset>
                             <div class="form-card">
                                 <div class="row">
-                                    <div class="col-7">
-                                        <h2 class="fs-title">Finish:</h2>
+                                    <div class="col-12 text-center mb-2" style="display: none" id="div_btn">
                                     </div>
-                                    <div class="col-5">
-                                        <h2 class="steps">Step 4 - 4</h2>
+                                    <div class="col-12">
+                                        <h2 class="purple-text text-center mb-5">
+                                            <strong id="div_mensagem"></strong>
+                                        </h2>
                                     </div>
-                                </div> <br><br>
-                                <h2 class="purple-text text-center">
-                                    <strong>SUCCESS !</strong></h2> <br>
-                                <div class="row justify-content-center">
-                                    <div class="col-3">
-                                        <img src="https://i.imgur.com/GwStPmg.png" class="fit-image">
-                                    </div>
-                                </div>
-                                <br><br>
-                                <div class="row justify-content-center">
-                                    <div class="col-7 text-center">
-                                        <h5 class="purple-text text-center">You Have Successfully Signed Up</h5>
+                                    <div class="col-12 text-center" id="div_img">
+                                        <!--<img src="https://i.imgur.com/GwStPmg.png" class="" style="max-width: 150px;">-->
                                     </div>
                                 </div>
                             </div>
@@ -346,22 +325,21 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.15/jquery.mask.min.js"></script>
-    <script src="{{ asset('assets/signature-pad-main/signaturepad.js') }}"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="{{ asset('assets/customizable-signature-pad/dist/js/jquery.signature.js') }}"></script>
     <script>
         $("#cpf").mask("000.000.000-00");
-        $('.sigPad').signaturePad({
-            lineWidth: 1,
-            drawOnly:true,
-            lineTop: 230,
-            bgColour: '#fff',
-        });
-
         $(document).ready(function(){
 
             var current_fs, next_fs, previous_fs; //fieldsets
             var opacity;
             var current = 1;
             var steps = $("fieldset").length;
+
+            var sig = $('#sig').signature({
+                background: '#fff',
+                color: '#000',
+            });
 
             setProgressBar(current);
 
@@ -381,7 +359,6 @@
                         alert("Preencha todos os campos");
                         return false;
                     }
-
                 }
 
                 //Add Class Active
@@ -444,7 +421,9 @@
                 var cpf         = $("#cpf").val();
                 var email       = $("#email").val();
                 var telefone    = $("#telefone").val();
-                var assinatura  = generate_svg($(".output").val());
+                var assinatura  = document.getElementsByTagName('canvas')[0].toDataURL("image/png");
+                //var assinatura  = convertCanvasToImage();
+                //var assinatura  = sig.signature('toSVG')
                 //var assinatura  = $(".output").val()
 
                 var data = {
@@ -457,7 +436,8 @@
 
                 $.ajaxSetup({
                     headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                        "Content-Type": "application/x-www-form-urlencoded"
                     }
                 });
 
@@ -466,11 +446,15 @@
                     type : 'post',
                     data : data,
                     beforeSend : function(){
-                        console.log('Enviando...');
+                        document.getElementById("div_mensagem").innerHTML = "Assinando...";
+                        document.getElementById("div_img").innerHTML = `<img src="{{ asset('images/loading.gif') }}" class="" style="max-width: 150px;">`;
                     }
                 })
                 .done(function(msg){
-                    console.log(msg);
+                    document.getElementById("div_mensagem").innerHTML = "Documento assinado com sucesso!";
+                    document.getElementById("div_img").innerHTML = `<img src="https://i.imgur.com/GwStPmg.png" class="" style="max-width: 150px;">`;
+                    document.getElementById("div_img").style.display = "block";
+                    document.getElementById("div_mensagem").innerHTML = `<a href="` + `{{ route('aceite.pdf', $model->token) }}` + `"target="_" type="button" class="btn btn-dark">Download PDF</a>`;
                 })
                 .fail(function(jqXHR, textStatus, msg){
                     console.log(msg);
@@ -482,7 +466,7 @@
         function generate_svg(paths) {
             var svg = '';
             svg += '<svg width="198px" height="55px" version="1.1" xmlns="http://www.w3.org/2000/svg">\n';
-
+            paths = JSON.parse(paths);
             for(var i in paths) {
                 var path = '';
                 path += 'M' + paths[i].mx + ' ' + paths[i].my;   // moveTo
@@ -493,6 +477,16 @@
 
             svg += '</svg>\n';
             return svg;
+        }
+
+        function convertCanvasToImage() {
+            //let canvas = document.getElementById("canvas");
+            let canvas = document.getElementsByTagName('canvas')[0];
+            let image = new Image();
+            image.src = canvas.toDataURL();
+            //var div = document.getElementById("imgteste");
+            return image.src;
+            //return div.appendChild(image);
         }
     </script>
 </body>

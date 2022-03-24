@@ -19,7 +19,7 @@ class AceiteMail extends Mailable
      */
 
     public $dados;
-    public function __construct(AceiteEletronico $dados)
+    public function __construct(Array $dados)
     {
         $this->dados = $dados;
     }
@@ -32,10 +32,12 @@ class AceiteMail extends Mailable
     public function build()
     {
         $dados = $this->dados;
-        return $this->from($dados['email'])
+        $envia = $this->from('aceite@positivaconsultas.com.br')
                     ->view('aceite.mail')
                     ->with([
                         'model' => $dados,
                 ]);
+
+        return $envia;
     }
 }

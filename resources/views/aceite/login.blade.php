@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Assinar documento: {{ $dados['titulo'] }}</title>
+    <title>Assinar documento:</title>
     <!--
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     -->
@@ -32,7 +32,7 @@
         }
         .box {
             width: 530px;
-            height: 680px;
+            height: 600px;
             background: #fff;
         }
         .btn-primary {
@@ -48,45 +48,41 @@
     </style>
 </head>
 <body>
-    <div class="container-fluid">
-        <div class="box">
-            <div class="row p-4 text-center">
-                <div class="col-md-12">
-                    <img src="{{ asset('images/logo_04.png') }}" class="img-fluid" alt="" style="max-width: 300px;">
-                </div>
-                <div class="col-md-12 mt-5">
-                    <span>
-                        {{ $dados['nome'] }}, sua assinatura foi solicitada por Positiva Consultas no d
-                        ocumento {{ $dados['titulo'] }}.
-                    </span>
-                </div>
-                <div class="col-md-12 mt-5">
-                    <a href="{{ route('aceite', $dados['link']) }}" target="_blank" class="btn btn-primary btn-lg">VER DOCUMENTO</a>
-                </div>
-                <div class="col-md-12 mt-3">
-                    Ou utilize o link: <br>
-                    <a href="{{ route('aceite', $dados['link']) }}" target="_blank">{{ route('aceite', $dados['link']) }}</a>
-                </div>
-                <div class="col-md-12 mt-3">
-                    Utilize a senha para liberar o acesso: <br>
-                    {{ $dados['senha'] }}
-                </div>
-                <div class="col-md-12 mt-3">
-                    <strong>Não compartilhe este e-mail</strong> <br>
-                    Para sua segurança, não encaminhe este e-mail a ninguém.
-                </div>
-                <div class="col-md-12 mt-3">
-                    <strong>O que é o aceite eletrônico?</strong> <br>
-                    Com o Aceite Eletrônico, você pode coletar assinaturas em documentos por onde quiser (ex: WhatsApp, SMS, Telegram, e-mail etc.).
-                </div>
-                <div class="col-md-12 mt-3 mb-5">
-                    Atenciosamente,
-                    Positiva Consultas
-                </div>
-                <div class="col-md-12 mt-5">
+    <form action="{{ route('aceite.login', $token) }}" method="POST" id="form_login">
+        <div class="container-fluid">
+            <div class="box">
+                <div class="row p-4">
+                    <div class="col-md-12">
+                        <img src="{{ asset('images/logo_04.png') }}" class="img-fluid" alt="" style="max-width: 300px;">
+                    </div>
+                    <div class="col md-12 mt-5">
+                        Token: t1Z554332e21wX1cH53pYrJ0NrDo8026820
+                    </div>
+                    <div class="col-md-12 mt-2">
+                        <input type="text" name="senha" id="senha" class="form-control" placeholder="Senha">
+                        <input type="hidden" name="token" id="token" value="{{ $token }}">
+                    </div>
+                    <div class="col-md-12 mt-2">
+                        <div class="d-grid gap-2">
+                            @csrf
+                            <button type="button" class="btn btn-primary" onclick="document.getElementById('form_login').submit();">Entrar</button>
+                        </div>
+                    </div>
+                    <div class="col-md-12 mt-5 text-center">
+                        <strong>Não compartilhe este e-mail</strong> <br>
+                        Para sua segurança, não encaminhe este e-mail a ninguém.
+                    </div>
+                    <div class="col-md-12 mt-3 text-center">
+                        <strong>O que é o aceite eletrônico?</strong> <br>
+                        Com o Aceite Eletrônico, você pode coletar assinaturas em documentos por onde quiser (ex: WhatsApp, SMS, Telegram, e-mail etc.).
+                    </div>
+                    <div class="col-md-12 mt-3 text-center">
+                        Atenciosamente,
+                        Positiva Consultas
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    </form>
 </body>
 </html>

@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class AceiteEletronico
- * 
+ *
  * @property int $id
  * @property string|null $nome
  * @property string|null $cpf
@@ -32,7 +32,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int|null $id_users
  * @property int|null $id_contrato
  * @property int|null $status
- * 
+ *
  * @property UsersApi|null $users_api
  *
  * @package App\Models
@@ -73,6 +73,7 @@ class AceiteEletronico extends Model
 		'contrato',
 		'assinatura',
 		'token',
+        'senha',
 		'url',
 		'pdf',
 		'id_users',
