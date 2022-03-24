@@ -32,7 +32,8 @@ class AceiteMail extends Mailable
     public function build()
     {
         $dados = $this->dados;
-        $envia = $this->from('aceite@positivaconsultas.com.br')
+        $envia = $this->subject($dados['titulo'])
+                    ->from('aceite@positivaconsultas.com.br')
                     ->view('aceite.mail')
                     ->with([
                         'model' => $dados,
