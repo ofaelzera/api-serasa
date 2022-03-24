@@ -33,6 +33,7 @@ class AceiteMail extends Mailable
     {
         $dados = $this->dados;
         $envia = $this->from('aceite@positivaconsultas.com.br')
+                    ->subject('Positiva Consultas solicitou sua assinatura')
                     ->view('aceite.mail')
                     ->with([
                         'model' => $dados,
