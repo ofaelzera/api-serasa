@@ -215,7 +215,7 @@ class AceiteController extends Controller
 
     public function getDownload($token){
 
-        $file = public_path() . "/aceite/pdf/" .$token .".pdf";
+        $file = storage_path() . "/aceite/pdf/" .$token .".pdf";
 
         if (file_exists($file)) {
             header('Content-Type: application/pdf');
