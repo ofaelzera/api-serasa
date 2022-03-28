@@ -1851,7 +1851,37 @@ class Crednet
             $aArrayRetorno['COD_CONS']  = rtrim(substr($Arr, 5, 4), " ");
             $aArrayRetorno['SUB_TIP']   = rtrim(substr($Arr, 9, 2), " ");
             $aArrayRetorno['COD_SETOR'] = rtrim(substr($Arr, 10, 4), " ");
-            $aArrayRetorno['COD_RELAC'] = rtrim(substr($Arr, 14, 4), " ");
+            $rela = rtrim(substr($Arr, 14, 4), " ");
+            switch ($rela) {
+                case '0000':
+                    $aArrayRetorno['COD_RELAC'] = 'Sem classificação de setor';
+                    break;
+                case '1000':
+                    $aArrayRetorno['COD_RELAC'] = 'Atacado';
+                    break;
+                case '2000':
+                    $aArrayRetorno['COD_RELAC'] = 'Segmento Bancos Financeiras';
+                    break;
+                case '3000':
+                    $aArrayRetorno['COD_RELAC'] = 'Serviços';
+                    break;
+                case '4000':
+                    $aArrayRetorno['COD_RELAC'] = 'Comercio';
+                    break;
+                case '5000':
+                    $aArrayRetorno['COD_RELAC'] = 'Industria';
+                    break;
+                case '6000':
+                    $aArrayRetorno['COD_RELAC'] = 'Factoring';
+                    break;
+                case '7000':
+                    $aArrayRetorno['COD_RELAC'] = 'Seguradora';
+                    break;
+                case '8000':
+                    $aArrayRetorno['COD_RELAC'] = 'Outros';
+                    break;
+            }
+            //$aArrayRetorno['COD_RELAC'] = rtrim(substr($Arr, 14, 4), " ");
             $aArrayRetorno['MSG_RLSET'] = rtrim(substr($Arr, 19, 80), " ");
             $aArrayRetorno['FILLER']    = rtrim(substr($Arr, 98, 18), " ");
         }else
