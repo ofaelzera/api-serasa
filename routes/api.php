@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\MeProtejaController;
 use App\Http\Controllers\Api\ConcentreController;
 use App\Http\Controllers\Api\ContratoController;
 use App\Http\Controllers\Api\CrednetController;
+use App\Http\Controllers\Api\GerencieController;
 use App\Http\Controllers\Api\MeAviseController;
 use App\Http\Controllers\Api\ProredeController;
 
@@ -83,3 +84,4 @@ Route::prefix('meavise')->group(function () {
 });
 
 //Route::post('prorede/analyse_sales', [ProredeController::class, 'AnalyseSales']);
+Route::get('gerencie/index', [GerencieController::class, 'index']);

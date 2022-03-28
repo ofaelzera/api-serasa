@@ -15,7 +15,8 @@
         "laravel/ui": "^3.3",
         "rstmpw/ibmmq": "^1.2",
         "setasign/fpdi": "^2.3",
-        "tymon/jwt-auth": "^1.0"
+        "tymon/jwt-auth": "^1.0",
+        "webklex/laravel-imap": "^2.4"
     },
     "require-dev": {
         "facade/ignition": "^2.5",
