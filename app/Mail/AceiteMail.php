@@ -32,7 +32,7 @@ class AceiteMail extends Mailable
     public function build()
     {
         $dados = $this->dados;
-        $envia = $this->subject($dados['titulo'])
+        $envia = $this->subject('Aceite eletrônico - Positiva Consultas/Serasa Experian')
                     ->from('aceite@positivaconsultas.com.br')
                     ->view('aceite.mail')
                     ->with([
