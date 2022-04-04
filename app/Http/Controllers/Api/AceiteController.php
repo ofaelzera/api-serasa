@@ -341,7 +341,7 @@ class AceiteController extends Controller
 
 
                 // adicionando o conteúdo do certificado e do PDF para impressão
-                if($dados['tabela_preco'] == 'S'){
+                if($model->tabela_preco == 'S'){
                     $pdf->writeHTML(view('pdf', compact('texto_contrato', 'tabPreco', 'aArrayFeatures', 'aArrayProdutos')), true, 0, true, 0);
                 }else{
                     $pdf->writeHTML($texto_contrato, true, 0, true, 0);

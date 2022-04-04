@@ -7,14 +7,6 @@ table, th, td {
 {!! $texto_contrato !!}
 
 @isset($tabPreco)
-
-<table style="width: 100%">
-    <tr>
-        <th style="text-align: center;">
-            <img src="{{ asset('images/logo_04.png') }}" alt="" style="max-width: 250px">
-        </th>
-    </tr>
-</table>
 <br><br><br>
 <table style="width: 100%">
     <tr>
