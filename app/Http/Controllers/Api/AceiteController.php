@@ -254,7 +254,7 @@ class AceiteController extends Controller
             $file = storage_path() . "/aceite/assinaturas/" .$token .".png";
             file_put_contents($file, $data);
 
-            if($dados['tabela_preco'] == 'S'){
+            if($model->tabela_preco == 'S'){
                 $contrato = ConContrato::where('id', $model->id_contrato)->first();
                 $tabPreco = json_decode($contrato->aProdutosPrecosJson, true);
 
