@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use App\Models\AceiteEletronico;
 use App\Http\Controllers\Controller;
 use App\Mail\AceiteMail;
+use App\Models\Positiva\ConContrato;
+use App\Models\Positiva\ProdFeature;
+use App\Models\Positiva\ProdProduto;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 
@@ -250,6 +253,32 @@ class AceiteController extends Controller
             $file = storage_path() . "/aceite/assinaturas/" .$token .".png";
             file_put_contents($file, $data);
 
+            if($dados['tabela_preco'] == 'S'){
+                $contrato = ConContrato::where('id', $model->id_contrato)->first();
+                $tabPreco = json_decode($contrato->aProdutosPrecosJson, true);
+
+                //$ProdFeatures = ProdFeatures::find()->all();
+                $ProdFeatures = ProdFeature::all();
+                $aArrayFeatures = [];
+
+                foreach ($ProdFeatures as $features){
+                    $aArrayFeatures[$features->ID] = $features->aDescricao;
+                }
+
+                //$ProdProdutos = ProdProduto::find()->all();
+                $ProdProdutos = ProdProduto::all();
+                $aArrayProdutos = [];
+
+                foreach ($ProdProdutos as $produto){
+                    if($produto->nTipoPessoaDestin == 0){
+                        $aArrayProdutos['PF'][$produto->ID] = $produto->aDescricao;
+                    }else if($produto->nTipoPessoaDestin == 1) {
+                        $aArrayProdutos['PJ'][$produto->ID] = $produto->aDescricao;
+                    }
+
+                }
+            }
+
             $cert = storage_path('POSITIVA_CONSULTAS.pfx');
             $certificado = file_get_contents($cert);
 
@@ -311,7 +340,11 @@ class AceiteController extends Controller
 
 
                 // adicionando o conteúdo do certificado e do PDF para impressão
-                $pdf->writeHTML($texto_contrato, true, 0, true, 0);
+                if($dados['tabela_preco'] == 'S'){
+                    $pdf->writeHTML(view('pdf', compact('texto_contrato', 'tabPreco', 'aArrayFeatures', 'aArrayProdutos')), true, 0, true, 0);
+                }else{
+                    $pdf->writeHTML($texto_contrato, true, 0, true, 0);
+                }
 
                 // modo de impressão
                 //$pdf->Output(public_path('arquivo.pdf'), 'F'); // salva em um diretório
@@ -328,10 +361,34 @@ class AceiteController extends Controller
 
     public function teste()
     {
-        $model = AceiteEletronico::where('token', '0B226s7T22T1f2340Bgx07bWm2V3362E0r9')->first();
+        $model = AceiteEletronico::where('token', '1IPt4WW12I750H38i1G20A8e2uVg502Up13')->first();
         $assinatura = '<img src="'. $model->assinatura .'" border="0" height="41" width="41" align="bottom" />';
         $texto_contrato = self::replaceTexto($model->contrato, $model->assinatura);
-        return view('pdf', compact('texto_contrato'));
+        $contrato = ConContrato::where('id', $model->id_contrato)->first();
+        $tabPreco = json_decode($contrato->aProdutosPrecosJson, true);
+
+        //$ProdFeatures = ProdFeatures::find()->all();
+        $ProdFeatures = ProdFeature::all();
+        $aArrayFeatures = [];
+
+        foreach ($ProdFeatures as $features){
+            $aArrayFeatures[$features->ID] = $features->aDescricao;
+        }
+
+        //$ProdProdutos = ProdProduto::find()->all();
+        $ProdProdutos = ProdProduto::all();
+        $aArrayProdutos = [];
+
+        foreach ($ProdProdutos as $produto){
+            if($produto->nTipoPessoaDestin == 0){
+                $aArrayProdutos['PF'][$produto->ID] = $produto->aDescricao;
+            }else if($produto->nTipoPessoaDestin == 1) {
+                $aArrayProdutos['PJ'][$produto->ID] = $produto->aDescricao;
+            }
+
+        }
+
+        return view('pdf', compact('texto_contrato', 'tabPreco', 'aArrayFeatures', 'aArrayProdutos'));
     }
 
     private static function replaceTexto($texto,$assinatura)
