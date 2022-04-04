@@ -98,6 +98,7 @@ class AceiteController extends Controller
         $model->token       = $token;
         $model->senha       = $senha;
         $model->url         = $token;
+        $model->tabela_preco = $dados['tabela_preco'];
         $model->id_users    = $user->id;
         $model->id_contrato = $dados['id_contrato'];
         $model->status      = 0;

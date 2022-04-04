@@ -76,6 +76,7 @@ class AceiteEletronico extends Model
         'senha',
 		'url',
 		'pdf',
+        'tabela_preco',
 		'id_users',
 		'id_contrato',
 		'status'
