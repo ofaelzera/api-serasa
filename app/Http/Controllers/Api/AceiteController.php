@@ -401,6 +401,7 @@ class AceiteController extends Controller
         $newTexto = str_replace('[[Dia Assinatura]]',       date("d"),      $newTexto);
         $newTexto = str_replace('[[Mes Assinatura]]',       date("m"),      $newTexto);
         $newTexto = str_replace('[[Ano Assinatura]]',       date("Y"),      $newTexto);
+        $newTexto = str_replace('[[Logo Positiva]]',        '<img src="'. storage_path() . "/aceite/logo_positiva.png" .'" border="0" height="60" width="300" align="bottom" />',      $newTexto);
 
         return $newTexto;
     }
