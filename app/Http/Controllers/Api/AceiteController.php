@@ -157,6 +157,7 @@ class AceiteController extends Controller
                 'contrato'      => $model->contrato,
                 'assinatura'    => $model->assinatura,
                 'token'         => $model->token,
+                'senha'         => $model->senha,
                 'url'           => $model->url,
                 'pdf'           => route('aceite.pdf', ['token' => $model->token]),
                 'status'        => $model->status,
