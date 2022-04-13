@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-
-use App\Models\Positiva\ConCliente;
-use App\Models\Positiva\ConContrato;
-
 use App\Models\Serasa\MeProteja;
+use App\Models\Positiva\ConCliente;
+use App\Http\Controllers\Controller;
+use App\Models\Positiva\ConContrato;
+use Illuminate\Support\Facades\Mail;
+
 
 
 class MeProtejaController extends Controller
@@ -41,6 +41,11 @@ class MeProtejaController extends Controller
             $result = MeProteja::incluir_empresa($request->all());
 
             if($result['success'] == 'true'){
+                try {
+                    //Mail::to('')->send('');
+                } catch (\Throwable $th) {
+                    //throw $th;
+                }
                 return response(['success' => 'OK', 'data' => $result['data']], 200);
             }else{
                 return response(['error' => $result['code'], 'data' => $result['message']], 400);

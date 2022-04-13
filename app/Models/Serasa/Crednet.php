@@ -28,12 +28,12 @@ class Crednet
     {
         if(self::$PRODUCAO) {
             $aRtn = Serasa::getTextoComBrancoDireita('21742667', 8);
-            $aRtn .= Serasa::getTextoComBrancoDireita("GUI@10", 8);
+            $aRtn .= Serasa::getTextoComBrancoDireita("GUI@1212", 8);
             $aRtn .= Serasa::getTextoComBrancoDireita('', 8);
         }else
         {
             $aRtn = Serasa::getTextoComBrancoDireita('21742667', 8);
-            $aRtn .= Serasa::getTextoComBrancoDireita("GUI@10", 8);
+            $aRtn .= Serasa::getTextoComBrancoDireita("GUI@1212", 8);
             $aRtn .= Serasa::getTextoComBrancoDireita('', 8);
         }
 

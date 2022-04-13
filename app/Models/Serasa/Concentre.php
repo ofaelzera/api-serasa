@@ -23,7 +23,7 @@ class Concentre
     {
         if(self::$PRODUCAO) {
             $aRtn = Serasa::getTextoComBrancoDireita('21742667', 8);
-            $aRtn .= Serasa::getTextoComBrancoDireita("GUI@01", 8);
+            $aRtn .= Serasa::getTextoComBrancoDireita("GUI@1212", 8);
         }else
         {
             $aRtn = Serasa::getTextoComBrancoDireita('23815018', 8);

@@ -28,7 +28,7 @@ class MeProteja
         if(self::$PRODUCAO) {
             $aLogons = [
                 'logon'     => '21742667',
-                'password'  => 'GUI@10',
+                'password'  => 'GUI@1212',
             ];
         }else
         {
