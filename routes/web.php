@@ -18,7 +18,10 @@ Route::get('/', function () {
     return redirect('https://www.positivaconsultas.com.br/');
 });
 
-Route::get('/teste', [AceiteController::class, 'teste'])->name('teste');
+//Route::get('/teste', [AceiteController::class, 'teste'])->name('teste');
+Route::get('/teste', function () {
+    return view('meproteja.mail');
+});
 Route::get('/aceite/{token}', [AceiteController::class, 'verificar'])->name('aceite');
 Route::post('/aceite/{token}', [AceiteController::class, 'assinar'])->name('assinar');
 Route::get('/aceite/login/{token}', [AceiteController::class, 'viewLogin'])->name('aceite.view.login');

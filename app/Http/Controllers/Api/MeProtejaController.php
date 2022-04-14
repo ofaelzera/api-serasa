@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Serasa\MeProteja;
 use App\Models\Positiva\ConCliente;
 use App\Http\Controllers\Controller;
+use App\Mail\MeProteja as MailMeProteja;
 use App\Models\Positiva\ConContrato;
 use Illuminate\Support\Facades\Mail;
 
@@ -21,6 +22,7 @@ class MeProtejaController extends Controller
                 'cnpj'                  => 'required',
                 'plano_monitoramento'   => 'required',
                 'modalidade_cobranca'   => 'required',
+                'email'                 => 'required',
             ]);
 
             /*
@@ -39,12 +41,14 @@ class MeProtejaController extends Controller
             */
 
             $result = MeProteja::incluir_empresa($request->all());
-
+            //$result['success'] = 'true';
             if($result['success'] == 'true'){
                 try {
                     //Mail::to('')->send('');
+                    $email = $request->all()['email'];
+                    Mail::to($email)->send(new MailMeProteja($result));
                 } catch (\Throwable $th) {
-                    //throw $th;
+                    throw $th;
                 }
                 return response(['success' => 'OK', 'data' => $result['data']], 200);
             }else{
