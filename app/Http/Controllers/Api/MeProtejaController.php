@@ -55,7 +55,7 @@ class MeProtejaController extends Controller
             }
 
         } catch (\Throwable $th) {
-            return response(['error' => $th->getMessage()], 200);
+            return response(['error' => $th->getMessage()], 400);
         }
     }
 
