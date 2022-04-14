@@ -41,16 +41,15 @@ class MeProtejaController extends Controller
             */
 
             $result = MeProteja::incluir_empresa($request->all());
-            //$result['success'] = 'true';
             if($result['success'] == 'true'){
                 try {
                     //Mail::to('')->send('');
                     $email = $request->all()['email'];
                     Mail::to($email)->send(new MailMeProteja($result));
+                    return response(['success' => 'OK', 'data' => $result['data']], 200);
                 } catch (\Throwable $th) {
-                    throw $th;
+                    return response(['error' => $result['code'], 'data' => $result['message']], 400);
                 }
-                return response(['success' => 'OK', 'data' => $result['data']], 200);
             }else{
                 return response(['error' => $result['code'], 'data' => $result['message']], 400);
             }
