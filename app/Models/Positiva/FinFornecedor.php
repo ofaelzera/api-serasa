@@ -38,7 +38,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class FinFornecedor extends Model
 {
-    protected $connection= 'mysql_2';
 	protected $table = 'FinFornecedor';
 	protected $primaryKey = 'ID';
 	public $timestamps = false;

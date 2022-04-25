@@ -59,7 +59,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class FinFinanceiro extends Model
 {
-    protected $connection= 'mysql_2';
 	protected $table = 'FinFinanceiro';
 	protected $primaryKey = 'ID';
 	public $timestamps = false;

@@ -28,14 +28,10 @@ use Illuminate\Database\Eloquent\Model;
  * @property Carbon|null $dDataExcluiu
  * @property string|null $aMotivoExcluiu
  *
- * @property ConCliente $con_cliente
- * @property ConContrato $con_contrato
- *
  * @package App\Models
  */
 class ConLogon extends Model
 {
-    protected $connection= 'mysql_2';
 	protected $table = 'ConLogon';
 	protected $primaryKey = 'ID';
 	public $timestamps = false;
@@ -72,14 +68,4 @@ class ConLogon extends Model
 		'dDataExcluiu',
 		'aMotivoExcluiu'
 	];
-
-	public function con_cliente()
-	{
-		return $this->belongsTo(ConCliente::class, 'nIdCliente');
-	}
-
-	public function con_contrato()
-	{
-		return $this->belongsTo(ConContrato::class, 'nIdContrato');
-	}
 }

@@ -20,7 +20,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class BaseLoginLiberacao extends Model
 {
-    protected $connection= 'mysql_2';
 	protected $table = 'BaseLoginLiberacao';
 	protected $primaryKey = 'ID';
 	public $timestamps = false;

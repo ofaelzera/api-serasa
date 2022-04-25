@@ -70,7 +70,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class ConPefinOperacao extends Model
 {
-    protected $connection= 'mysql_2';
 	protected $table = 'ConPefinOperacao';
 	protected $primaryKey = 'ID';
 	public $timestamps = false;

@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * Class ConMeProtejaRelatorio
  *
- * @property int|null $ID
+ * @property int $ID
  * @property string $aCliente
  * @property string $aDistribuidor
  * @property string $aJson
@@ -26,10 +26,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class ConMeProtejaRelatorio extends Model
 {
-    protected $connection   = 'mysql_2';
-	protected $table        = 'ConMeProtejaRelatorio';
-    protected $primaryKey   = 'ID';
-	public $timestamps      = true;
+	protected $table = 'ConMeProtejaRelatorio';
+	protected $primaryKey = 'ID';
 
 	protected $casts = [
 		'nStatus' => 'int'

@@ -54,7 +54,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class FinBanco extends Model
 {
-    protected $connection= 'mysql_2';
 	protected $table = 'FinBanco';
 	protected $primaryKey = 'ID';
 	public $timestamps = false;

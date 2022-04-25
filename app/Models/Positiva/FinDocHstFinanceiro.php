@@ -29,7 +29,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class FinDocHstFinanceiro extends Model
 {
-    protected $connection= 'mysql_2';
 	protected $table = 'FinDocHstFinanceiro';
 	protected $primaryKey = 'ID';
 	public $timestamps = false;

@@ -30,7 +30,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class FinDocFinanceiro extends Model
 {
-    protected $connection= 'mysql_2';
 	protected $table = 'FinDocFinanceiro';
 	protected $primaryKey = 'ID';
 	public $timestamps = false;

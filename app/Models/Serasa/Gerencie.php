@@ -10,7 +10,6 @@ class Gerencie
     public static function connect()
     {
         $client = Client::account('default');
-
         $client->connect();
 
         /*
@@ -44,17 +43,15 @@ class Gerencie
             $DOM = new \DOMDocument;
             $DOM->loadHTML($message->getHTMLBody());
             $items = $DOM->getElementsByTagName('tr');
+            $docs = [];
 
             foreach ($items as $node) {
                 $texto = ltrim(rtrim(self::tdrows($node->childNodes), " "), " ");
                 $texto = preg_replace( "/\r|\n/", "", $texto);
                 if($texto != " "){
-
                     $texto = new ValidaCPFeCNPJ($texto);
-                    //$texto = new ValidaCPFeCNPJ('044.734.561/0001-90');
                     if($texto->valida()){
-                        $texto = $texto->valor;
-                        echo ($texto != "") ? $texto . "<br />" : "";
+                        array_push($docs, $texto->valor);
                     }
                 }
             }

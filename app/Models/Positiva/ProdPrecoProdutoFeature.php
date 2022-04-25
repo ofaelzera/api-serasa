@@ -30,7 +30,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class ProdPrecoProdutoFeature extends Model
 {
-    protected $connection= 'mysql_2';
 	protected $table = 'ProdPrecoProdutoFeature';
 	protected $primaryKey = 'ID';
 	public $timestamps = false;

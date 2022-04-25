@@ -7,7 +7,6 @@
 namespace App\Models\Positiva;
 
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -34,6 +33,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $aClausulasEspeciais
  * @property string|null $aArrayLogonSenha
  * @property int|null $nTipoContrato
+ * @property int|null $nConsulmoDetalhado
  * @property int|null $nStatus
  * @property int|null $nIdLoginIncluiu
  * @property Carbon|null $dDataIncluiu
@@ -43,13 +43,10 @@ use Illuminate\Database\Eloquent\Model;
  * @property Carbon|null $dDataExcluiu
  * @property string|null $aMotivoExcluiu
  *
- * @property Collection|ConLogon[] $con_logons
- *
  * @package App\Models
  */
 class ConContrato extends Model
 {
-    protected $connection= 'mysql_2';
 	protected $table = 'ConContrato';
 	protected $primaryKey = 'ID';
 	public $timestamps = false;
@@ -65,6 +62,7 @@ class ConContrato extends Model
 		'dValorVCM' => 'float',
 		'nIndiceReajuste' => 'int',
 		'nTipoContrato' => 'int',
+		'nConsulmoDetalhado' => 'int',
 		'nStatus' => 'int',
 		'nIdLoginIncluiu' => 'int',
 		'nIdLoginAlterou' => 'int',
@@ -102,6 +100,7 @@ class ConContrato extends Model
 		'aClausulasEspeciais',
 		'aArrayLogonSenha',
 		'nTipoContrato',
+		'nConsulmoDetalhado',
 		'nStatus',
 		'nIdLoginIncluiu',
 		'dDataIncluiu',
@@ -111,14 +110,4 @@ class ConContrato extends Model
 		'dDataExcluiu',
 		'aMotivoExcluiu'
 	];
-
-	public function con_logons()
-	{
-		return $this->hasMany(ConLogon::class, 'nIdContrato');
-	}
-
-    public function getClient()
-	{
-		return $this->belongsTo(ConCliente::class, 'nIdCliente', 'ID');
-	}
 }

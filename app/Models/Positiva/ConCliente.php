@@ -7,7 +7,6 @@
 namespace App\Models\Positiva;
 
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -40,13 +39,10 @@ use Illuminate\Database\Eloquent\Model;
  * @property Carbon|null $dDataExcluiu
  * @property string|null $aMotivoExcluiu
  *
- * @property Collection|ConLogon[] $con_logons
- *
  * @package App\Models
  */
 class ConCliente extends Model
 {
-    protected $connection= 'mysql_2';
 	protected $table = 'ConCliente';
 	protected $primaryKey = 'ID';
 	public $timestamps = false;
@@ -96,14 +92,4 @@ class ConCliente extends Model
 		'dDataExcluiu',
 		'aMotivoExcluiu'
 	];
-
-	public function con_logons()
-	{
-		return $this->hasMany(ConLogon::class, 'nIdCliente');
-	}
-
-    public function getContrato()
-	{
-		return $this->belongsTo(ConContrato::class, 'nIdCliente', 'ID');
-	}
 }

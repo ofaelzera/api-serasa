@@ -29,7 +29,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class FinFeriado extends Model
 {
-    protected $connection= 'mysql_2';
 	protected $table = 'FinFeriado';
 	protected $primaryKey = 'ID';
 	public $timestamps = false;

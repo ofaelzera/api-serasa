@@ -14,6 +14,8 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property int $ID
  * @property int $nIdTabProdutoFeature
+ * @property int|null $nIdNomeTabPreco
+ * @property int|null $nSequencia
  * @property string|null $aDescricao
  * @property string|null $aReduzido
  * @property int|null $nOrigemValor
@@ -32,13 +34,14 @@ use Illuminate\Database\Eloquent\Model;
  */
 class ProdTipoPreco extends Model
 {
-    protected $connection= 'mysql_2';
 	protected $table = 'ProdTipoPreco';
 	protected $primaryKey = 'ID';
 	public $timestamps = false;
 
 	protected $casts = [
 		'nIdTabProdutoFeature' => 'int',
+		'nIdNomeTabPreco' => 'int',
+		'nSequencia' => 'int',
 		'nOrigemValor' => 'int',
 		'nIdTipoPrecoBase' => 'int',
 		'dPercSobreBase' => 'float',
@@ -56,6 +59,8 @@ class ProdTipoPreco extends Model
 
 	protected $fillable = [
 		'nIdTabProdutoFeature',
+		'nIdNomeTabPreco',
+		'nSequencia',
 		'aDescricao',
 		'aReduzido',
 		'nOrigemValor',
