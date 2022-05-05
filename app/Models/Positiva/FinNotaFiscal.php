@@ -35,6 +35,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class FinNotaFiscal extends Model
 {
+    protected $connection = 'mysql_2';
 	protected $table = 'FinNotaFiscal';
 	protected $primaryKey = 'ID';
 	public $timestamps = false;

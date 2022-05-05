@@ -32,6 +32,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class ConLogon extends Model
 {
+    protected $connection = 'mysql_2';
 	protected $table = 'ConLogon';
 	protected $primaryKey = 'ID';
 	public $timestamps = false;

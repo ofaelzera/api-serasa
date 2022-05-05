@@ -34,6 +34,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class ConGerencie extends Model
 {
+    protected $connection = 'mysql_2';
 	protected $table = 'ConGerencie';
 	protected $primaryKey = 'ID';
 	public $timestamps = false;

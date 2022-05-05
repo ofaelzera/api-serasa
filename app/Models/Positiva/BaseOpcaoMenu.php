@@ -27,6 +27,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class BaseOpcaoMenu extends Model
 {
+    protected $connection = 'mysql_2';
 	protected $table = 'BaseOpcaoMenu';
 	protected $primaryKey = 'ID';
 	public $timestamps = false;

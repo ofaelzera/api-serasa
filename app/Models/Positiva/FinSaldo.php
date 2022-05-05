@@ -35,6 +35,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class FinSaldo extends Model
 {
+    protected $connection = 'mysql_2';
 	protected $table = 'FinSaldos';
 	protected $primaryKey = 'ID';
 	public $timestamps = false;

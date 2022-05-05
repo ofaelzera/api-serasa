@@ -34,6 +34,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class ConPefin extends Model
 {
+    protected $connection = 'mysql_2';
 	protected $table = 'ConPefin';
 	protected $primaryKey = 'ID';
 	public $timestamps = false;

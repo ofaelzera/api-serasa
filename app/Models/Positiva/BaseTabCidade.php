@@ -26,6 +26,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class BaseTabCidade extends Model
 {
+    protected $connection = 'mysql_2';
 	protected $table = 'BaseTabCidade';
 	protected $primaryKey = 'ID';
 	public $timestamps = false;

@@ -31,6 +31,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class ProdProduto extends Model
 {
+    protected $connection = 'mysql_2';
 	protected $table = 'ProdProduto';
 	protected $primaryKey = 'ID';
 	public $timestamps = false;

@@ -33,6 +33,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class FinConsulta extends Model
 {
+    protected $connection = 'mysql_2';
 	protected $table = 'FinConsultas';
 	protected $primaryKey = 'ID';
 	public $timestamps = false;

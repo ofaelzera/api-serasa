@@ -34,6 +34,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class FinBancoRemessa extends Model
 {
+    protected $connection = 'mysql_2';
 	protected $table = 'FinBancoRemessa';
 	protected $primaryKey = 'ID';
 	public $timestamps = false;

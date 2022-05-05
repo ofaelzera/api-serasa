@@ -43,6 +43,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class BaseLogin extends Model
 {
+    protected $connection = 'mysql_2';
 	protected $table = 'BaseLogin';
 	protected $primaryKey = 'ID';
 	public $timestamps = false;

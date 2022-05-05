@@ -26,6 +26,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class ConMeProtejaRelatorio extends Model
 {
+    protected $connection = 'mysql_2';
 	protected $table = 'ConMeProtejaRelatorio';
 	protected $primaryKey = 'ID';
 

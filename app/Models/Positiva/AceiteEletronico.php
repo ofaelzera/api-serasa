@@ -36,6 +36,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class AceiteEletronico extends Model
 {
+    protected $connection = 'mysql_2';
 	protected $table = 'AceiteEletronico';
 	protected $primaryKey = 'ID';
 	public $timestamps = false;

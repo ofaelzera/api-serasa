@@ -31,6 +31,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class ConMeProtejaSocio extends Model
 {
+    protected $connection = 'mysql_2';
 	protected $table = 'ConMeProtejaSocio';
 	protected $primaryKey = 'ID';
 	public $timestamps = false;

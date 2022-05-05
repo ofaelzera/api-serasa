@@ -28,6 +28,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class ProdTabPreco extends Model
 {
+    protected $connection = 'mysql_2';
 	protected $table = 'ProdTabPreco';
 	protected $primaryKey = 'ID';
 	public $timestamps = false;

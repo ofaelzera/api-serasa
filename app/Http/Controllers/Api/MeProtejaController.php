@@ -6,9 +6,14 @@ use Illuminate\Http\Request;
 use App\Models\Serasa\MeProteja;
 use App\Models\Positiva\ConCliente;
 use App\Http\Controllers\Controller;
+use App\Mail\MailSendMeProteja;
 use App\Mail\MeProteja as MailMeProteja;
 use App\Models\Positiva\ConContrato;
+use App\Models\Positiva\ConMeProteja;
+use App\Models\Positiva\ConMeProtejaRelatorio;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\DB;
+
 
 
 
@@ -270,6 +275,57 @@ class MeProtejaController extends Controller
                 ],
                 401);
         }
+    }
+
+    public function sendMail()
+    {
+        $relatorio = DB::connection('mysql_2')
+        ->table('ConMeProtejaRelatorio')
+        ->select('*')
+        ->where('nStatus', '=', 0)
+        ->first();
+
+        if($relatorio == null){
+            return response(['error' => 'Não existem relatorios para serem enviados!'], 400);
+        }
+
+        $arr = json_decode($relatorio->aJson, true);
+        $doc = $arr["Relatorio"]["dadosRelato"]["empresaConsultada"]["CNPJ"]["_text"];
+        $doc = substr($doc, 0, 2) . "." . substr($doc, 2, 3) . "." . substr($doc, 5, 3);
+
+        $meproteja = DB::connection('mysql_2')
+        ->table('ConMeProteja')
+        ->select('*')
+        ->where('aDocumento', 'LIKE', '%'. $doc .'%')
+        ->first();
+
+        if($meproteja == null){
+
+            $doc = $arr["Relatorio"]["dadosRelato"]["empresaConsultada"]["CNPJ"]["_text"];
+            $doc = substr($doc, 0, 3) . "." . substr($doc, 3, 3) . "." . substr($doc, 6, 3) . "-" . substr($doc, 9, 2);
+
+            $meproteja = DB::connection('mysql_2')
+            ->table('ConMeProtejaSocio')
+            ->select('*')
+            ->where('aDocumentoSocio', 'LIKE', '%'. $doc .'%')
+            ->first();
+
+            if($meproteja == null){
+                return [];
+            }
+        }
+        //$meproteja->aEmail
+        Mail::to($meproteja->aEmail)->send(new MailSendMeProteja(['dados_meproteja' => $meproteja, 'dados_relatorio' => $arr]));
+        $ID = $relatorio->ID;
+        $relatorio = ConMeProtejaRelatorio::find($ID);
+        $relatorio->nStatus = 1;
+        $relatorio->save();
+
+        return response(['success' => 'OK', 'data' => 'Email enviado com sucesso!'], 200);
+
+        //return view('meproteja.relatorio', compact('meproteja', 'arr'));
+        //return $arr;
+
     }
 
 }

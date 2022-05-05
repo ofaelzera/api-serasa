@@ -33,6 +33,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class ConMeProteja extends Model
 {
+    protected $connection = 'mysql_2';
 	protected $table = 'ConMeProteja';
 	protected $primaryKey = 'ID';
 	public $timestamps = false;

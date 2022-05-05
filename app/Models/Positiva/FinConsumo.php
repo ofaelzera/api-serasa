@@ -31,6 +31,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class FinConsumo extends Model
 {
+    protected $connection = 'mysql_2';
 	protected $table = 'FinConsumo';
 	protected $primaryKey = 'ID';
 	public $timestamps = false;

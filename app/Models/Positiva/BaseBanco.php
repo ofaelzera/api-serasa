@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class BaseBanco extends Model
 {
+    protected $connection = 'mysql_2';
 	protected $table = 'BaseBancos';
 	protected $primaryKey = 'ID';
 	public $timestamps = false;

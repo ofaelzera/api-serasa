@@ -25,6 +25,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class BaseAtividade extends Model
 {
+    protected $connection = 'mysql_2';
 	protected $table = 'BaseAtividades';
 	protected $primaryKey = 'ID';
 	public $timestamps = false;

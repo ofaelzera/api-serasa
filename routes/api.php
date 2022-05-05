@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\ContratoController;
 use App\Http\Controllers\Api\CrednetController;
 use App\Http\Controllers\Api\GerencieController;
 use App\Http\Controllers\Api\MeAviseController;
+use App\Http\Controllers\Api\PefinController;
 use App\Http\Controllers\Api\ProredeController;
 
 /*
@@ -48,7 +49,6 @@ Route::middleware('apiJwt')->group(function () {
         Route::post('/consultar/socio', [MeProtejaController::class, 'consultarSocio']);
 
         Route::post('/incluir/dados/', [MeProtejaController::class, 'incluir_dados']);
-
     });
 
     Route::prefix('concentre')->group(function () {
@@ -77,6 +77,10 @@ Route::middleware('apiJwt')->group(function () {
         Route::post('getAceiteEletronico', [AceiteController::class, 'getAceiteEletronico']);
     });
 
+    Route::prefix('pefin')->group(function () {
+        Route::post('setPefin', [PefinController::class, 'setPefin']);
+    });
+
 });
 
 Route::prefix('meavise')->group(function () {
@@ -85,3 +89,4 @@ Route::prefix('meavise')->group(function () {
 
 //Route::post('prorede/analyse_sales', [ProredeController::class, 'AnalyseSales']);
 Route::get('gerencie/index', [GerencieController::class, 'index']);
+Route::get('/meproteja/sendMail/', [MeProtejaController::class, 'sendMail']);
