@@ -46,83 +46,68 @@
             </tr>
         </tbody>
     </table>
-    <table class="table">
-        <thead>
-            <tr>
-                <th style="text-align: left">Pendencias Financeiras</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($arr["Relatorio"]["dadosRelato"]["apontamentos"]["PendenciasFinanceiras"] as $pendenciaFinanceira)
-                @if (isset($pendenciaFinanceira['Mensagem']))
-                    <tr>
-                        <td>
-                            {{ $pendenciaFinanceira['Mensagem']['_text'] }}
-                        </td>
-                    </tr>
-                @endif
-            @endforeach
-        </tbody>
-    </table>
-    <br><br>
-    <table class="table">
-        <thead>
-            <tr>
-                <th style="text-align: left">Grafias</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($arr["Relatorio"]["dadosRelato"]["apontamentos"]["Grafias"] as $Grafias)
-                @if (isset($Grafias['Nome']))
-                    <tr>
-                        <td>
-                            {{ $Grafias['Nome']['_text'] }}
-                        </td>
-                    </tr>
-                @endif
-            @endforeach
-        </tbody>
-    </table>
-    <br><br>
-    <table class="table">
-        <thead>
-            <tr>
-                <th colspan="6" style="text-align: left">Dividas Vencidas</th>
-            </tr>
-            <tr>
-                <th>Quantidade</th>
-                <th>Data Ocorrencia</th>
-                <th>Modalidade</th>
-                <th>Valor</th>
-                <th>Titulo Divida</th>
-                <th>Instituião Financeira</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($arr["Relatorio"]["dadosRelato"]["apontamentos"]["DividasVencidas"] as $DividasVencidas)
+    @if (isset($arr["Relatorio"]["dadosRelato"]["apontamentos"]["Grafias"]))
+        <br><br>
+        <table class="table">
+            <thead>
                 <tr>
-                    <td>
-                        {{ $DividasVencidas['Quantidade']['_text'] }}
-                    </td>
-                    <td>
-                        {{ $DividasVencidas['DataOcorrencia']['_text'] }}
-                    </td>
-                    <td>
-                        {{ $DividasVencidas['Modalidade']['_text'] }}
-                    </td>
-                    <td>
-                        {{ $DividasVencidas['Valor']['_text'] }}
-                    </td>
-                    <td>
-                        {{ $DividasVencidas['TituloDivida']['_text'] }}
-                    </td>
-                    <td>
-                        {{ $DividasVencidas['InstituicaoFinanceira']['_text'] }}
-                    </td>
+                    <th style="text-align: left">Grafias</th>
                 </tr>
-            @endforeach
-        </tbody>
-    </table>
-    <br><br>
+            </thead>
+            <tbody>
+                @foreach ($arr["Relatorio"]["dadosRelato"]["apontamentos"]["Grafias"] as $Grafias)
+                    @if (isset($Grafias['Nome']))
+                        <tr>
+                            <td>
+                                {{ $Grafias['Nome']['_text'] }}
+                            </td>
+                        </tr>
+                    @endif
+                @endforeach
+            </tbody>
+        </table>
+    @endif
+    @if (isset($arr["Relatorio"]["dadosRelato"]["apontamentos"]["DividasVencidas"]))
+        <br><br>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th colspan="6" style="text-align: left">Dividas Vencidas</th>
+                </tr>
+                <tr>
+                    <th>Quantidade</th>
+                    <th>Data Ocorrencia</th>
+                    <th>Modalidade</th>
+                    <th>Valor</th>
+                    <th>Titulo Divida</th>
+                    <th>Instituião Financeira</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($arr["Relatorio"]["dadosRelato"]["apontamentos"]["DividasVencidas"] as $DividasVencidas)
+                    <tr>
+                        <td>
+                            {{ $DividasVencidas['Quantidade']['_text'] }}
+                        </td>
+                        <td>
+                            {{ $DividasVencidas['DataOcorrencia']['_text'] }}
+                        </td>
+                        <td>
+                            {{ $DividasVencidas['Modalidade']['_text'] }}
+                        </td>
+                        <td>
+                            {{ $DividasVencidas['Valor']['_text'] }}
+                        </td>
+                        <td>
+                            {{ $DividasVencidas['TituloDivida']['_text'] }}
+                        </td>
+                        <td>
+                            {{ $DividasVencidas['InstituicaoFinanceira']['_text'] }}
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    @endif
 </body>
 </html>

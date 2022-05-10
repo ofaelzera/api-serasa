@@ -290,7 +290,7 @@ class MeProtejaController extends Controller
         }
 
         $arr = json_decode($relatorio->aJson, true);
-        $doc = $arr["Relatorio"]["dadosRelato"]["empresaConsultada"]["CNPJ"]["_text"];
+        $doc = substr($arr["Relatorio"]["_attributes"]["cliente"], 1);
         $doc = substr($doc, 0, 2) . "." . substr($doc, 2, 3) . "." . substr($doc, 5, 3);
 
         $meproteja = DB::connection('mysql_2')
@@ -314,15 +314,15 @@ class MeProtejaController extends Controller
                 return [];
             }
         }
-        //$meproteja->aEmail
+        //$meproteja->aEmail;
         Mail::to($meproteja->aEmail)->send(new MailSendMeProteja(['dados_meproteja' => $meproteja, 'dados_relatorio' => $arr]));
         $ID = $relatorio->ID;
         $relatorio = ConMeProtejaRelatorio::find($ID);
         $relatorio->nStatus = 1;
         $relatorio->save();
 
+        //return view('meproteja.relatorio', compact('meproteja', 'arr'));
         return response(['success' => 'OK', 'data' => 'Email enviado com sucesso!'], 200);
-
         //return view('meproteja.relatorio', compact('meproteja', 'arr'));
         //return $arr;
 
