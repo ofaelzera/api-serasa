@@ -45,13 +45,10 @@
             </h2>
             <br>
             <span style="font-size: 15pt;">
-                A partir de agora o CNPJ da empresa e o CPF de seus sócios serão monitorados.
-                Notificaremos por e-mail quaisquer alterações relacionadas à situação cadastral e anotações de inadimplência.
-                Nosso time está à disposição para atendê-lo e para garantir que você obtenha o melhor de nossos serviços.
-                Você também pode encontrar em anexo um relatório da sua empresa.
+            A partir de agora o CNPJ da empresa e o CPF de seus sócios serão monitorados. <br>
+            Notificaremos por e-mail quaisquer alterações relacionadas à situação cadastral e anotações de inadimplência.<br>
+            Nosso time está à disposição para atendê-lo e para garantir que você obtenha o melhor de nossos serviços.<br>
             </span>
-            <br><br><br>
-            <h3 style="text-align: center">Obrigada por se juntar a nós!</h3>
         </div>
     </div>
 </body>

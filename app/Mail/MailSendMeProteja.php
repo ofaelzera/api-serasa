@@ -35,9 +35,8 @@ class MailSendMeProteja extends Mailable
                     ->from('meproteja@positivaconsultas.com.br')
                     ->view('meproteja.relatorio')
                     ->with([
-                        'meproteja' => $dados['dados_meproteja'],
-                        'arr' => $dados['dados_relatorio'],
-                ]);
+                        'array' => $dados['array'],
+                    ]);
 
         return $envia;
     }

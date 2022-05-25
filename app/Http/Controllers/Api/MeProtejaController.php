@@ -286,46 +286,249 @@ class MeProtejaController extends Controller
         ->first();
 
         if($relatorio == null){
-            return response(['error' => 'Não existem relatorios para serem enviados!'], 400);
+            return response(['info' => 'Não existem relatorios para serem enviados!'], 400);
         }
 
         $arr = json_decode($relatorio->aJson, true);
-        $doc = substr($arr["Relatorio"]["_attributes"]["cliente"], 1);
-        $doc = substr($doc, 0, 2) . "." . substr($doc, 2, 3) . "." . substr($doc, 5, 3);
+        $arr = $this->TrataArr($arr);
 
+        foreach($arr as $array){
+
+            if(isset($array["empresa_consultada"])){
+                $doc = substr($array["empresa_consultada"]["cnpj"], 0, 2) . '.' . substr($array["empresa_consultada"]["cnpj"], 2, 3) . '.' . substr($array["empresa_consultada"]["cnpj"], 5, 3);
+                $meproteja = DB::connection('mysql_2')
+                ->table('ConMeProteja')
+                ->select('*')
+                ->where('aDocumento', 'LIKE', '%'. $doc .'%')
+                ->first();
+
+                if($meproteja != null){
+                    //$meproteja->aEmail
+                    Mail::to($meproteja->aEmail)->send(new MailSendMeProteja(['array' => $array]));
+                    $doc = null;
+                    $meproteja = null;
+                }
+            }else
+            if(isset($array["pessoa_consultada"])){
+                $doc = substr($array["pessoa_consultada"]["cpf"], 0, 3) . '.' . substr($array["pessoa_consultada"]["cpf"], 3, 3) . '.' . substr($array["pessoa_consultada"]["cpf"], 6, 3);
+                $meproteja = DB::connection('mysql_2')
+                ->table('ConMeProtejaSocio')
+                ->select('*')
+                ->where('aDocumentoSocio', 'LIKE', '%'. $doc .'%')
+                ->first();
+
+                if($meproteja != null){
+                    //$meproteja->aEmail;
+                    Mail::to($meproteja->aEmail)->send(new MailSendMeProteja(['array' => $array]));
+                    $doc = null;
+                    $meproteja = null;
+                }
+            }
+
+        }
+
+        $relatorio->nStatus = 1;
+        $relatorio->save();
+        return response(['success' => 'OK', 'data' => 'Email enviado com sucesso!'], 200);
+
+        /*
         $meproteja = DB::connection('mysql_2')
         ->table('ConMeProteja')
         ->select('*')
         ->where('aDocumento', 'LIKE', '%'. $doc .'%')
         ->first();
-
-        if($meproteja == null){
-
-            $doc = $arr["Relatorio"]["dadosRelato"]["empresaConsultada"]["CNPJ"]["_text"];
-            $doc = substr($doc, 0, 3) . "." . substr($doc, 3, 3) . "." . substr($doc, 6, 3) . "-" . substr($doc, 9, 2);
-
-            $meproteja = DB::connection('mysql_2')
-            ->table('ConMeProtejaSocio')
-            ->select('*')
-            ->where('aDocumentoSocio', 'LIKE', '%'. $doc .'%')
-            ->first();
-
-            if($meproteja == null){
-                return [];
-            }
-        }
+        */
         //$meproteja->aEmail;
-        Mail::to($meproteja->aEmail)->send(new MailSendMeProteja(['dados_meproteja' => $meproteja, 'dados_relatorio' => $arr]));
-        $ID = $relatorio->ID;
-        $relatorio = ConMeProtejaRelatorio::find($ID);
-        $relatorio->nStatus = 1;
-        $relatorio->save();
+        //Mail::to($meproteja->aEmail)->send(new MailSendMeProteja(['dados_meproteja' => $meproteja, 'dados_relatorio' => $arr]));
+        //$ID = $relatorio->ID;
+        //$relatorio = ConMeProtejaRelatorio::find($ID);
+        //$relatorio->nStatus = 1;
+        //$relatorio->save();
 
         //return view('meproteja.relatorio', compact('meproteja', 'arr'));
-        return response(['success' => 'OK', 'data' => 'Email enviado com sucesso!'], 200);
+        //return response(['success' => 'OK', 'data' => 'Email enviado com sucesso!'], 200);
         //return view('meproteja.relatorio', compact('meproteja', 'arr'));
         //return $arr;
+    }
 
+
+    private function TrataArr($Arr)
+    {
+        $newArr = [];
+        if(!isset($Arr["Relatorio"]["dadosRelato"][0])){
+            $subs = $Arr["Relatorio"]["dadosRelato"];
+            $Arr["Relatorio"]["dadosRelato"] = [];
+            $Arr["Relatorio"]["dadosRelato"][0] = $subs;
+        }
+
+        if(isset($Arr["Relatorio"]["dadosRelato"][0])){
+
+            foreach($Arr["Relatorio"]["dadosRelato"] as $key => $value){
+
+                if(isset($value["empresaConsultada"]["CNPJ"])){
+                    $newArr[$key]['empresa_consultada']['cnpj']                         = (isset($value["empresaConsultada"]["CNPJ"]["_text"]) ? $value["empresaConsultada"]["CNPJ"]["_text"] : '');
+                    $newArr[$key]['empresa_consultada']['descricao_situacao_documento'] = (isset($value["empresaConsultada"]["DescricaoSituacaoDocumento"]["_text"]) ? $value["empresaConsultada"]["DescricaoSituacaoDocumento"]["_text"] : '');
+                    $newArr[$key]['empresa_consultada']['situcao_documento']            = (isset($value["empresaConsultada"]["SituacaoDocumento"]["_text"]) ? $value["empresaConsultada"]["SituacaoDocumento"]["_text"] : '');
+                    $newArr[$key]['empresa_consultada']['razao_social']                 = (isset($value["empresaConsultada"]["RazaoSocial"]["_text"]) ? $value["empresaConsultada"]["RazaoSocial"]["_text"] : '');
+                    $newArr[$key]['empresa_consultada']['nome_fantasia']                = (isset($value["empresaConsultada"]["NomeFantasia"]["_text"]) ? $value["empresaConsultada"]["NomeFantasia"]["_text"] : '');
+                    $newArr[$key]['empresa_consultada']['descricao_tipo_sociedade']     = (isset($value["empresaConsultada"]["DescricaoTipoSociedade"]["_text"]) ? $value["empresaConsultada"]["DescricaoTipoSociedade"]["_text"] : '');
+                    $newArr[$key]['empresa_consultada']['antecessoras']['razao_social'] = (isset($value["empresaConsultada"]["Antecessoras"]["antecessora"]["RazaoSocialAntecessora"]["_text"]) ? $value["empresaConsultada"]["Antecessoras"]["antecessora"]["RazaoSocialAntecessora"]["_text"] : '');
+                    $newArr[$key]['empresa_consultada']['antecessoras']['data_razao']   = (isset($value["empresaConsultada"]["Antecessoras"]["antecessora"]["DataRazaoSocialAntecessora"]["_text"]) ? $value["empresaConsultada"]["Antecessoras"]["antecessora"]["DataRazaoSocialAntecessora"]["_text"] : '');
+                }else
+                if(isset($value["pessoaConsultada"]["CPF"])){
+                    $newArr[$key]['pessoa_consultada']['cpf']                           = (isset($value["pessoaConsultada"]["CPF"]["_text"]) ? $value["pessoaConsultada"]["CPF"]["_text"] : '');
+                    $newArr[$key]['pessoa_consultada']['codigo_situca_documento']       = (isset($value["pessoaConsultada"]["CodigoSituacaoCadastral"]["_text"]) ? $value["pessoaConsultada"]["CodigoSituacaoCadastral"]["_text"] : '');
+                    $newArr[$key]['pessoa_consultada']['descricao_situacao_documento']  = (isset($value["pessoaConsultada"]["DescricaoSituacaoCadastral"]["_text"]) ? $value["pessoaConsultada"]["DescricaoSituacaoCadastral"]["_text"] : '');
+                    $newArr[$key]['pessoa_consultada']['nome']                          = (isset($value["pessoaConsultada"]["Nome"]["_text"]) ? $value["pessoaConsultada"]["Nome"]["_text"] : '');
+                }
+
+                if(isset($value["apontamentos"]["PendenciasFinanceiras"]["Mensagem"]["Mensagem"]["_text"])
+                && $value["apontamentos"]["PendenciasFinanceiras"]["Mensagem"]["Mensagem"]["_text"] == "=== NADA CONSTA PARA O CNPJ CONSULTADO ==="){
+
+                }else{
+
+                    if(isset($value["apontamentos"]["PendenciasFinanceiras"]["Pefins"])){
+
+                        $newArr[$key]['apontamentos']['pefins']['quantidade'] = (isset($value["apontamentos"]["PendenciasFinanceiras"]["Pefins"]["Quantidade"]["_text"]) ? $value["apontamentos"]["PendenciasFinanceiras"]["Pefins"]["Quantidade"]["_text"] : '');
+                        if(!isset($value["apontamentos"]["PendenciasFinanceiras"]["Pefins"]["Pefin"][0])){
+                            $subs = $value["apontamentos"]["PendenciasFinanceiras"]["Pefins"]["Pefin"];
+                            $value["apontamentos"]["PendenciasFinanceiras"]["Pefins"]["Pefin"] = [];
+                            $value["apontamentos"]["PendenciasFinanceiras"]["Pefins"]["Pefin"][0] = $subs;
+
+                        }
+                        foreach($value["apontamentos"]["PendenciasFinanceiras"]["Pefins"]["Pefin"] as $index => $pefin){
+                            $newArr[$key]['apontamentos']['pefins']['pefin'][$index]['data_ocorrencia']     = (isset($pefin["DataOcorrencia"]["_text"])     ? $pefin["DataOcorrencia"]["_text"] : '');
+                            $newArr[$key]['apontamentos']['pefins']['pefin'][$index]['descricao_natureza']  = (isset($pefin["DescricaoNatureza"]["_text"])  ? $pefin["DescricaoNatureza"]["_text"] : '');
+                            $newArr[$key]['apontamentos']['pefins']['pefin'][$index]['avalista']            = (isset($pefin["Pefins"]["Pefin"][0]["Avalista"]["_text"]) ? $pefin["Avalista"]["_text"] : '');
+                            $newArr[$key]['apontamentos']['pefins']['pefin'][$index]['valor']               = (isset($pefin["Valor"]["_text"])      ? $pefin["Valor"]["_text"] : '');
+                            $newArr[$key]['apontamentos']['pefins']['pefin'][$index]['contrato']            = (isset($pefin["Contrato"]["_text"])   ? $pefin["Contrato"]["_text"] : '');
+                            $newArr[$key]['apontamentos']['pefins']['pefin'][$index]['origem']              = (isset($pefin["Origem"]["_text"])     ? $pefin["Origem"]["_text"] : '');
+                        }
+                    }
+
+                    if(isset($value["apontamentos"]["PendenciasFinanceiras"]["Refins"])){
+
+                        $newArr[$key]['apontamentos']['refins']['quantidade'] = (isset($value["apontamentos"]["PendenciasFinanceiras"]["Refins"]["Quantidade"]["_text"]) ? $value["apontamentos"]["PendenciasFinanceiras"]["Refins"]["Quantidade"]["_text"] : '');
+                        if(!isset($value["apontamentos"]["PendenciasFinanceiras"]["Refins"]["Refin"][0])){
+                            $subs = $value["apontamentos"]["PendenciasFinanceiras"]["Refins"]["Refin"];
+                            $value["apontamentos"]["PendenciasFinanceiras"]["Refins"]["Refin"] = [];
+                            $value["apontamentos"]["PendenciasFinanceiras"]["Refins"]["Refin"][0] = $subs;
+                        }
+                        foreach($value["apontamentos"]["PendenciasFinanceiras"]["Refins"]["Refin"] as $index => $pefin){
+                            $newArr[$key]['apontamentos']['refins']['refin'][$index]['data_ocorrencia']     = (isset($pefin["DataOcorrencia"]["_text"]) ? $pefin["DataOcorrencia"]["_text"] : '');
+                            $newArr[$key]['apontamentos']['refins']['refin'][$index]['descricao_natureza']  = (isset($pefin['DescricaoNatureza']['_text']) ? $pefin["DescricaoNatureza"]["_text"] : '');
+                            $newArr[$key]['apontamentos']['refins']['refin'][$index]['avalista']            = (isset($pefin['Avalista']['_text']) ? $pefin["Avalista"]["_text"] : '');
+                            $newArr[$key]['apontamentos']['refins']['refin'][$index]['valor']               = (isset($pefin['Valor']['_text']) ? $pefin["Valor"]["_text"] : '');
+                            $newArr[$key]['apontamentos']['refins']['refin'][$index]['contrato']            = (isset($pefin['Contrato']['_text']) ? $pefin["Contrato"]["_text"] : '');
+                            $newArr[$key]['apontamentos']['refins']['refin'][$index]['origem']              = (isset($pefin['Origem']['_text']) ? $pefin["Origem"]["_text"] : '');
+                        }
+                    }
+
+                }
+
+                if(isset($value["apontamentos"]["Protestos"])){
+
+                    $newArr[$key]['apontamentos']['protestos']['quantidade'] = (isset($value["apontamentos"]["Protestos"]["Quantidade"]["_text"]) ? $value["apontamentos"]["Protestos"]["Quantidade"]["_text"] : '');
+                    if(isset($value["apontamentos"]["Protestos"]["Protesto"][0])){
+                        foreach($value["apontamentos"]["Protestos"]["Protesto"] as $index => $protesto){
+                            $newArr[$key]['apontamentos']['protestos']['protesto'][$index]['data_ocorrencia']       = (isset($protesto["DataOcorrencia"]["_text"]) ? $protesto["DataOcorrencia"]["_text"] : '');
+                            $newArr[$key]['apontamentos']['protestos']['protesto'][$index]['tipo_moeda']            = (isset($protesto["TipoMoeda"]["_text"]) ? $protesto["TipoMoeda"]["_text"] : '');;
+                            $newArr[$key]['apontamentos']['protestos']['protesto'][$index]['valor']                 = (isset($protesto["Valor"]["_text"]) ? $protesto["Valor"]["_text"] : '');;
+                            $newArr[$key]['apontamentos']['protestos']['protesto'][$index]['cartorio']              = (isset($protesto["Cartorio"]["_text"]) ? $protesto["Cartorio"]["_text"] : '');;
+                            $newArr[$key]['apontamentos']['protestos']['protesto'][$index]['cidade_ocorrencia']     = (isset($protesto["CidadeOcorrencia"]["_text"]) ? $protesto["CidadeOcorrencia"]["_text"] : '');;
+                            $newArr[$key]['apontamentos']['protestos']['protesto'][$index]['uf_ocorrencia']         = (isset($protesto["UFOcorrencia"]["_text"]) ? $protesto["UFOcorrencia"]["_text"] : '');;
+                        }
+                    }
+
+                }
+
+                if(isset($value["apontamentos"]["ChequesSemFundoAchei"])){
+
+                    $newArr[$key]['apontamentos']['ChequesSemFundoAchei']['quantidade']         = (isset($value["apontamentos"]["ChequesSemFundoAchei"]["ChequeSemFundoAchei"]["Quantidade"]["_text"]) ? $value["apontamentos"]["ChequesSemFundoAchei"]["ChequeSemFundoAchei"]["Quantidade"]["_text"] : '');
+                    $newArr[$key]['apontamentos']['ChequesSemFundoAchei']['data_ocorrencia']    = (isset($value["apontamentos"]["ChequesSemFundoAchei"]["ChequeSemFundoAchei"]["DataOcorrencia"]["_text"]) ? $value["apontamentos"]["ChequesSemFundoAchei"]["ChequeSemFundoAchei"]["DataOcorrencia"]["_text"] : '');
+                    $newArr[$key]['apontamentos']['ChequesSemFundoAchei']['numero']             = (isset($value["apontamentos"]["ChequesSemFundoAchei"]["ChequeSemFundoAchei"]["Numero"]["_text"]) ? $value["apontamentos"]["ChequesSemFundoAchei"]["ChequeSemFundoAchei"]["Numero"]["_text"] : '');
+                    $newArr[$key]['apontamentos']['ChequesSemFundoAchei']['alinea']             = (isset($value["apontamentos"]["ChequesSemFundoAchei"]["ChequeSemFundoAchei"]["Alinea"]["_text"]) ? $value["apontamentos"]["ChequesSemFundoAchei"]["ChequeSemFundoAchei"]["Alinea"]["_text"] : '');
+                    $newArr[$key]['apontamentos']['ChequesSemFundoAchei']['moeda']              = (isset($value["apontamentos"]["ChequesSemFundoAchei"]["ChequeSemFundoAchei"]["Moeda"]["_text"]) ? $value["apontamentos"]["ChequesSemFundoAchei"]["ChequeSemFundoAchei"]["Moeda"]["_text"] : '');
+                    $newArr[$key]['apontamentos']['ChequesSemFundoAchei']['valor']              = (isset($value["apontamentos"]["ChequesSemFundoAchei"]["ChequeSemFundoAchei"]["Valor"]["_text"]) ? $value["apontamentos"]["ChequesSemFundoAchei"]["ChequeSemFundoAchei"]["Valor"]["_text"] : '');
+                    $newArr[$key]['apontamentos']['ChequesSemFundoAchei']['banco']              = (isset($value["apontamentos"]["ChequesSemFundoAchei"]["ChequeSemFundoAchei"]["Banco"]["_text"]) ? $value["apontamentos"]["ChequesSemFundoAchei"]["ChequeSemFundoAchei"]["Banco"]["_text"] : '');
+                    $newArr[$key]['apontamentos']['ChequesSemFundoAchei']['agencia']            = (isset($value["apontamentos"]["ChequesSemFundoAchei"]["ChequeSemFundoAchei"]["Agencia"]["_text"]) ? $value["apontamentos"]["ChequesSemFundoAchei"]["ChequeSemFundoAchei"]["Agencia"]["_text"] : '');
+                    $newArr[$key]['apontamentos']['ChequesSemFundoAchei']['cidade']             = (isset($value["apontamentos"]["ChequesSemFundoAchei"]["ChequeSemFundoAchei"]["Cidade"]["_text"]) ?  $value["apontamentos"]["ChequesSemFundoAchei"]["ChequeSemFundoAchei"]["Cidade"]["_text"] : '');
+                    $newArr[$key]['apontamentos']['ChequesSemFundoAchei']['uf']                 = (isset($value["apontamentos"]["ChequesSemFundoAchei"]["ChequeSemFundoAchei"]["UFOcorrencia"]["_text"]) ? $value["apontamentos"]["ChequesSemFundoAchei"]["ChequeSemFundoAchei"]["UFOcorrencia"]["_text"] : '');
+
+                }
+
+                if(isset($value["apontamentos"]["ChequesExtraviadoSustadoRecheque"]["Mensagem"]["Mensagem"]["_text"])
+                && $value["apontamentos"]["ChequesExtraviadoSustadoRecheque"]["Mensagem"]["Mensagem"]["_text"] == "=== NADA CONSTA PARA O CNPJ CONSULTADO ==="){
+
+                }else{
+
+                }
+
+                if(isset($value["concentres"]["Concentre"]["Mensagens"]["Mensagem"]["Mensagem"]["_text"])
+                && $value["concentres"]["Concentre"]["Mensagens"]["Mensagem"]["Mensagem"]["_text"] == "=== NADA CONSTA PARA O CNPJ CONSULTADO ==="){
+
+                }else{
+
+                    if(!isset($value["concentres"]["Concentre"][0])){
+                        $subs = $value["concentres"]["Concentre"];
+                        $value["concentres"]["Concentre"] = array();
+                        $value["concentres"]["Concentre"][0] = $subs;
+                    }
+                    foreach($value["concentres"]["Concentre"] as $index => $concentre){
+
+                        $newArr[$key]['Concentre'][$index]['quantidade']        = (isset($concentre["Quantidade"]["_text"]) ? $concentre["Quantidade"]["_text"] : '');
+                        $newArr[$key]['Concentre'][$index]['discriminacao']     = (isset($concentre["Discriminacao"]["_text"]) ? $concentre["Discriminacao"]["_text"] : '');
+                        $newArr[$key]['Concentre'][$index]['data_inicial']      = (isset($concentre["DataInicial"]["_text"]) ? $concentre["DataInicial"]["_text"] : '');
+                        $newArr[$key]['Concentre'][$index]['data_final']        = (isset($concentre["DataFinal"]["_text"]) ? $concentre["DataFinal"]["_text"] : '');
+                        $newArr[$key]['Concentre'][$index]['moeda']             = (isset($concentre["Moeda"]["_text"]) ? $concentre["Moeda"]["_text"] : '');
+                        $newArr[$key]['Concentre'][$index]['valor']             = (isset($concentre["Valor"]["_text"]) ? $concentre["Valor"]["_text"] : '');
+                        $newArr[$key]['Concentre'][$index]['origem']            = (isset($concentre["Origem"]["_text"]) ? $concentre["Origem"]["_text"] : '');
+                        $newArr[$key]['Concentre'][$index]['praca']             = (isset($concentre["Praca"]["_text"]) ? $concentre["Praca"]["_text"] : '');
+
+                    }
+
+                }
+
+                if(isset($value["CartasComunicados"]["CartasComunicado"])){
+
+                    if(isset($value["CartasComunicados"]["CartasComunicado"][0])){
+
+                        foreach($value["CartasComunicados"]["CartasComunicado"] as $index => $cartas){
+
+                            $newArr[$key]['CartasComunicados'][$index]['tipo_inlclusao']        = (isset($cartas["TipoInclusao"]["_text"]) ? $cartas["TipoInclusao"]["_text"] : '');
+                            $newArr[$key]['CartasComunicados'][$index]['documento']             = (isset($cartas["Documento"]["_text"]) ? $cartas["Documento"]["_text"] : '');
+                            $newArr[$key]['CartasComunicados'][$index]['numero_comunicacao']    = (isset($cartas["NumeroComunicacao"]["_text"]) ? $cartas["NumeroComunicacao"]["_text"] : '');
+                            $newArr[$key]['CartasComunicados'][$index]['tipo_ocorrencia']       = (isset($cartas["TipoOcorrencia"]["_text"]) ? $cartas["TipoOcorrencia"]["_text"] : '');
+                            $newArr[$key]['CartasComunicados'][$index]['data_ocorrencia']       = (isset($cartas["DataOcorrencia"]["_text"]) ? $cartas["DataOcorrencia"]["_text"] : '');
+                            $newArr[$key]['CartasComunicados'][$index]['data_envio']            = (isset($cartas["DataEnvio"]["_text"]) ? $cartas["DataEnvio"]["_text"] : '');
+                            $newArr[$key]['CartasComunicados'][$index]['data_limite']           = (isset($cartas["DataLimite"]["_text"]) ? $cartas["DataLimite"]["_text"] : '');
+                            $newArr[$key]['CartasComunicados'][$index]['data_baixa']            = (isset($cartas["DataBaixa"]["_text"]) ? $cartas["DataBaixa"]["_text"] : '');
+                            $newArr[$key]['CartasComunicados'][$index]['status']                = (isset($cartas["Status"]["_text"]) ? $cartas["Status"]["_text"] : '');
+                            $newArr[$key]['CartasComunicados'][$index]['instituicao_credora']   = (isset($cartas["InstituicaoCredora"]["_text"]) ? $cartas["InstituicaoCredora"]["_text"] : '');
+
+                        }
+
+                    }else{
+                        $newArr[$key]['CartasComunicados'][0]['tipo_inlclusao']        = (isset($value["CartasComunicados"]["CartasComunicado"]["TipoInclusao"]["_text"]) ? $value["CartasComunicados"]["CartasComunicado"]["TipoInclusao"]["_text"] : '');
+                        $newArr[$key]['CartasComunicados'][0]['documento']             = (isset($value["CartasComunicados"]["CartasComunicado"]["Documento"]["_text"]) ? $value["CartasComunicados"]["CartasComunicado"]["Documento"]["_text"] : '');
+                        $newArr[$key]['CartasComunicados'][0]['numero_comunicacao']    = (isset($value["CartasComunicados"]["CartasComunicado"]["NumeroComunicacao"]["_text"]) ? $value["CartasComunicados"]["CartasComunicado"]["NumeroComunicacao"]["_text"] : '');
+                        $newArr[$key]['CartasComunicados'][0]['tipo_ocorrencia']       = (isset($value["CartasComunicados"]["CartasComunicado"]["TipoOcorrencia"]["_text"]) ? $value["CartasComunicados"]["CartasComunicado"]["TipoOcorrencia"]["_text"] : '');
+                        $newArr[$key]['CartasComunicados'][0]['data_ocorrencia']       = (isset($value["CartasComunicados"]["CartasComunicado"]["DataOcorrencia"]["_text"]) ? $value["CartasComunicados"]["CartasComunicado"]["DataOcorrencia"]["_text"] : '');
+                        $newArr[$key]['CartasComunicados'][0]['data_envio']            = (isset($value["CartasComunicados"]["CartasComunicado"]["DataEnvio"]["_text"]) ? $value["CartasComunicados"]["CartasComunicado"]["DataEnvio"]["_text"] : '');
+                        $newArr[$key]['CartasComunicados'][0]['data_limite']           = (isset($value["CartasComunicados"]["CartasComunicado"]["DataLimite"]["_text"]) ? $value["CartasComunicados"]["CartasComunicado"]["DataLimite"]["_text"] : '');
+                        $newArr[$key]['CartasComunicados'][0]['data_baixa']            = (isset($value["CartasComunicados"]["CartasComunicado"]["DataBaixa"]["_text"]) ? $value["CartasComunicados"]["CartasComunicado"]["DataBaixa"]["_text"] : '');
+                        $newArr[$key]['CartasComunicados'][0]['status']                = (isset($value["CartasComunicados"]["CartasComunicado"]["Status"]["_text"]) ? $value["CartasComunicados"]["CartasComunicado"]["Status"]["_text"] : '');
+                        $newArr[$key]['CartasComunicados'][0]['instituicao_credora']   = (isset($value["CartasComunicados"]["CartasComunicado"]["InstituicaoCredora"]["_text"]) ? $value["CartasComunicados"]["CartasComunicado"]["InstituicaoCredora"]["_text"] : '');
+                    }
+                }
+
+            }
+
+        }else{
+
+        }
+
+        return $newArr;
     }
 
 }
