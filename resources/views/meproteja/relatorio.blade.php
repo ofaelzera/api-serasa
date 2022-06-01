@@ -36,7 +36,7 @@
                     @if(isset($array["empresa_consultada"]["razao_social"]))
                         Olá, {{ $array["empresa_consultada"]["razao_social"] }} <br><br>
                     @endif
-                    @if($array["pessoa_consultada"]["nome"]))
+                    @if(isset($array["pessoa_consultada"]["nome"]))
                         Olá, {{ $array["pessoa_consultada"]["nome"] }} <br><br>
                     @endif
                     É melhor se prevenir do que arriscar. Por isso, avisamos que o seu documento teve algum tipo de atualização cadastral. <br>
