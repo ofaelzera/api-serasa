@@ -192,7 +192,7 @@
         @foreach($array["apontamentos"]["protestos"]["protesto"] as $protesto)
         <tr>
             <td>{{ $protesto['data_ocorrencia'] }}</td>
-            <td>{{ 'R$ ' . $refin['valor']. ',00' }}</td>
+            <td>{{ 'R$ ' . $protesto['valor']. ',00' }}</td>
             <td>{{ $protesto['cartorio'] }}</td>
             <td>{{ $protesto['cidade_ocorrencia'] }}</td>
             <td>{{ $protesto['uf_ocorrencia'] }}</td>
