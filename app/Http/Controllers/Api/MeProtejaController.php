@@ -327,6 +327,7 @@ class MeProtejaController extends Controller
 
         }
 
+        $relatorio = ConMeProtejaRelatorio::find($relatorio->ID);
         $relatorio->nStatus = 1;
         $relatorio->save();
         return response(['success' => 'OK', 'data' => 'Email enviado com sucesso!'], 200);
