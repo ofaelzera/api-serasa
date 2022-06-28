@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Models\Serasa\Pefin;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Positiva\ConPefin;
+use App\Models\Positiva\ConPefinOperacao;
 use Illuminate\Support\Facades\Auth;
 
 class PefinController extends Controller
@@ -34,10 +36,12 @@ class PefinController extends Controller
 
             $pefin = $request->all();
 
-            $model = new Pefin();
+            $model = new ConPefinOperacao();
             $model->nIdContrato             = Auth('api')->user()->id_contrato;
             $model->dData                   = date("Y-m-d");
             $model->aOperacao               = 'I';
+
+            //DADOS DEVEDOR
             $model->dDataOcorrencia         = $pefin['data_vencimento'];
             $model->dDataFinalContrato      = $pefin['data_final_contrato'];
             $model->aNatureza               = $pefin['codigo_natureza'];
@@ -57,29 +61,56 @@ class PefinController extends Controller
             $model->dValorDivida            = $pefin['valor'];
             $model->aNumeroContrato         = $pefin['numero_contrato'];
 
-            $model->aNomePai                = isset($pefin['nome_pai']) ?? $pefin['nome_pai'] = '';
-            $model->aNomeMae                = isset($pefin['nome_mae']) ?? $pefin['nome_mae'] = '';
-            $model->aSecundTipoDocumento    = isset($pefin['secund_tipo_documento']) ?? $pefin['secund_tipo_documento'] = '';
-            $model->aSecundRG               = isset($pefin['secund_rg']) ?? $pefin['secund_rg'] = '';
-            $model->aSecundUfRG             = isset($pefin['secund_uf_rg']) ?? $pefin['secund_uf_rg'] = '';
+            //DADOS ADICIONAIS DO DEVEDOR
+            $model->aNomePai                = isset($pefin['nome_pai'])                     ?? $pefin['nome_pai'] = '';
+            $model->aNomeMae                = isset($pefin['nome_mae'])                     ?? $pefin['nome_mae'] = '';
+            $model->aSecundTipoDocumento    = isset($pefin['secund_tipo_documento'])        ?? $pefin['secund_tipo_documento'] = '';
+            $model->aSecundRG               = isset($pefin['secund_rg'])                    ?? $pefin['secund_rg'] = '';
+            $model->aSecundUfRG             = isset($pefin['secund_uf_rg'])                 ?? $pefin['secund_uf_rg'] = '';
 
-            $model->aCoobrTipoPessoa        = isset($pefin['coobr_tipo_pessoa']) ?? $pefin['coobr_tipo_pessoa'] = '';
-            $model->aCoobrTipoDocumento     = isset($pefin['coobr_tipo_documento']) ?? $pefin['coobr_tipo_documento'] = '';
-            $model->aCoobrCpfCnpj           = isset($pefin['coobr_cpf_cnpj']) ?? $pefin['coobr_cpf_cnpj'] = '';
-            $model->aCoobSecTipoDocumento   = isset($pefin['coobr_secund_tipo_documento']) ?? $pefin['coobr_secund_tipo_documento'] = '';
-            $model->aCoobSecRG              = isset($pefin['coobr_secund_rg']) ?? $pefin['coobr_secund_rg'] = '';
-            $model->aCoobSecUfRG            = isset($pefin['coobr_secund_uf_rg']) ?? $pefin['coobr_secund_uf_rg'] = '';
+            //DADOS FIADOR
+            $model->aCoobrTipoPessoa        = isset($pefin['coobr_tipo_pessoa'])            ?? $pefin['coobr_tipo_pessoa'] = '';
+            $model->aCoobrTipoDocumento     = isset($pefin['coobr_tipo_documento'])         ?? $pefin['coobr_tipo_documento'] = '';
+            $model->aCoobrCpfCnpj           = isset($pefin['coobr_cpf_cnpj'])               ?? $pefin['coobr_cpf_cnpj'] = '';
+            $model->aCoobSecTipoDocumento   = isset($pefin['coobr_secund_tipo_documento'])  ?? $pefin['coobr_secund_tipo_documento'] = '';
+            $model->aCoobSecRG              = isset($pefin['coobr_secund_rg'])              ?? $pefin['coobr_secund_rg'] = '';
+            $model->aCoobSecUfRG            = isset($pefin['coobr_secund_uf_rg'])           ?? $pefin['coobr_secund_uf_rg'] = '';
 
-            $model->aNossoNumero            = isset($pefin['nosso_numero']) ?? $pefin['nosso_numero'] = '';
-            $model->aTipoComunicDevedor     = isset($pefin['tipo_comunic_devedor']) ?? $pefin['tipo_comunic_devedor'] = '';
+            $model->aNossoNumero            = isset($pefin['nosso_numero'])                 ?? $pefin['nosso_numero'] = '';
 
-            $model->nBanco                  = isset($pefin['banco']) ?? $pefin['banco'] = '';
-            $model->nCheque                 = isset($pefin['cheque']) ?? $pefin['cheque'] = '';
-            $model->nAlinea                 = isset($pefin['alinea']) ?? $pefin['alinea'] = '';
-            $model->nAgencia                = isset($pefin['agencia']) ?? $pefin['agencia'] = '';
-            $model->nConta                  = isset($pefin['conta']) ?? $pefin['conta'] = '';
+            //TIPO DE COMUMICADO
+            $model->aTipoComunicDevedor     = isset($pefin['tipo_comunic_devedor'])         ?? $pefin['tipo_comunic_devedor'] = '';
 
-            return response()->json($model);
+            //DADOS DO CHEQUE
+            $model->nBanco                  = isset($pefin['banco'])                        ?? $pefin['banco'] = '';
+            $model->nCheque                 = isset($pefin['cheque'])                       ?? $pefin['cheque'] = '';
+            $model->nAlinea                 = isset($pefin['alinea'])                       ?? $pefin['alinea'] = '';
+            $model->nAgencia                = isset($pefin['agencia'])                      ?? $pefin['agencia'] = '';
+            $model->nConta                  = isset($pefin['conta'])                        ?? $pefin['conta'] = '';
+
+            $model->nStatus                 = 0;
+            $model->nIdLoginIncluiu         = Auth('api')->user()->id;
+            $model->dDataIncluiu            = date("Y-m-d");
+
+            $conPefin = new ConPefin();
+            $conPefin->nIdContrato       = Auth('api')->user()->id_contrato;
+            $conPefin->dData             = date("Y-m-d");
+            $conPefin->nStatus           = 0;
+            $conPefin->nIdLoginIncluiu   = Auth('api')->user()->id;
+            $conPefin->dDataIncluiu      = date("Y-m-d");
+
+            if($conPefin->save()){
+                $model->nIdConPefin             = $conPefin->ID;
+                if($model->save()){
+                    return response(compact($model), 200);
+                }else{
+                    new \Throwable('Erro ao salvar novo registro');
+                }
+            }else{
+                new \Throwable('Erro ao salvar novo registro');
+            }
+
+            return response(compact($model), 200);
 
         } catch (\Throwable $th) {
             return response(['error' => $th->getMessage()], 400);

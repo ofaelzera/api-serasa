@@ -122,6 +122,9 @@ class Serasa
             return ['success' => true, 'data' => $Return];
 
         }catch(SoapFault $e){
+            if(isset($e->detail->SecurityFault->Instrucoes->Instrucao)){
+                return ['success' => false, 'message' => $e->detail->SecurityFault->Instrucoes->Instrucao, 'code' => $e->getCode()];
+            }
             return ['success' => false, 'message' => $e->getMessage(), 'code' => $e->getCode()];
         }
     }
