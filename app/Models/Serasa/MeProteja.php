@@ -102,7 +102,7 @@ class MeProteja
             $TIPO = "CNPJ";
         }
 
-        $DOC  = Serasa::getReplace($dados['documento_socio'], 9);
+        $DOC  = Serasa::getReplace($dados['documento_socio'], 8);
 
         $aDados = [
             'cnpjMonitorada'    => $CNPJ,
