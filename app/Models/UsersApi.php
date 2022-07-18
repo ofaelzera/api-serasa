@@ -70,6 +70,7 @@ class UsersApi extends Authenticatable implements JWTSubject
 		'password',
 		'access_token',
 		'id_empresa',
-		'id_contrato'
+		'id_contrato',
+        'isProducao'
 	];
 }

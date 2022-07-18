@@ -92,6 +92,7 @@ class Serasa
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
         $result = curl_exec($ch);
+        printf($result);
         if (curl_errno($ch)) {
             echo 'Error:' . curl_error($ch);
         }

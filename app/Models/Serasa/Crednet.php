@@ -4,6 +4,7 @@ namespace App\Models\Serasa;
 
 use App\Models\Positiva\ConContrato;
 use App\Models\Crednet as CrednetModel;
+use App\Models\Positiva\ConCliente;
 
 class Crednet
 {
@@ -11,12 +12,12 @@ class Crednet
 
     public static function isProducao()
     {
-        return self::$PRODUCAO;
+        return (auth('api')->user()->isProducao == 1) ? true : false;
     }
 
     public static function getUrl()
     {
-        if(self::$PRODUCAO) {
+        if(self::isProducao()) {
             //return 'https://sitenet43.serasa.com.br/Prod/consultahttps';
             return 'https://sitenet43-2.serasa.com.br/Prod/consultahttps';
         }
@@ -26,14 +27,14 @@ class Crednet
 
     public static function getAssinaturaDistribuidor()
     {
-        if(self::$PRODUCAO) {
+        if(self::isProducao()) {
             $aRtn = Serasa::getTextoComBrancoDireita('21742667', 8);
             $aRtn .= Serasa::getTextoComBrancoDireita("GUI@1212", 8);
             $aRtn .= Serasa::getTextoComBrancoDireita('', 8);
         }else
         {
-            $aRtn = Serasa::getTextoComBrancoDireita('21742667', 8);
-            $aRtn .= Serasa::getTextoComBrancoDireita("GUI@1212", 8);
+            $aRtn = Serasa::getTextoComBrancoDireita('30525613', 8);
+            $aRtn .= Serasa::getTextoComBrancoDireita("GUI@1414", 8);
             $aRtn .= Serasa::getTextoComBrancoDireita('', 8);
         }
 
@@ -85,7 +86,7 @@ class Crednet
 
         try {
             $modelCrednet = new CrednetModel();
-            $modelCrednet->id_contrato      = $aConsulta["id_contrato"];
+            $modelCrednet->id_contrato      = auth('api')->user()->id_contrato;
             $modelCrednet->data_consulta    = date("Y-m-d H:i:s");
             $modelCrednet->cnpj_consulta    = $aConsulta["cnpj_consulta"];
             $modelCrednet->logon            = $aConsulta["logon"];
@@ -215,10 +216,10 @@ class Crednet
         //END
 
         //INFORMA O TIPO DE PESSOA A SER CONSULTADA
-            if($aConsulta['tipo_pessoa'] == 'F'){
+            if($aConsulta['tipo_pessoa'] == 'F' || $aConsulta['tipo_pessoa'] == 'f'){
                 $nIdx = Serasa::getIdxDadosEmParam($aOpcoes, 'TIPOPESSOA');
                 $aOpcoes[$nIdx]['value'] = 'F';
-            }else if($aConsulta['tipo_pessoa'] == 'J'){
+            }else if($aConsulta['tipo_pessoa'] == 'J' || $aConsulta['tipo_pessoa'] == 'j'){
                 $nIdx = Serasa::getIdxDadosEmParam($aOpcoes, 'TIPOPESSOA');
                 $aOpcoes[$nIdx]['value'] = 'J';
             }
@@ -236,7 +237,7 @@ class Crednet
 
         //SETA O NUMERO DO CNPJ DO CONSULTANTE
             $nIdx = Serasa::getIdxDadosEmParam($aOpcoes, 'CONSULTANTE');
-            $CNPJ = ConContrato::find($aConsulta['id_contrato'])->getClient->aCNPJ;
+            $CNPJ = ConCliente::find(auth('api')->user()->id_empresa)->aCNPJ;
             $aOpcoes[$nIdx]['value'] = Serasa::getSoNumeroZeroEsquerda($CNPJ, $aOpcoes[$nIdx]['tam']) ;
         //END
 
