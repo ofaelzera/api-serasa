@@ -16,12 +16,12 @@ class Prorede
 
     public static function isProducao()
     {
-        return self::$PRODUCAO;
+        return (auth('api')->user()->isProducao == 1) ? true : false;
     }
 
     public static function getUrl($type)
     {
-        if(self::$PRODUCAO) {
+        if(self::isProducao()) {
 
             switch ($type) {
                 case 'analyse_sales':
@@ -84,7 +84,7 @@ class Prorede
     {
         try {
 
-            $Bearer         = Serasa::getLoginApiSerasa(self::$PRODUCAO);
+            $Bearer         = Serasa::getLoginApiSerasa(self::isProducao());
             $url            = self::getUrl('partners_orders') . '';
             $client         = new Client();
             $modelEmpresa   = ConEmpresa::find(1);
