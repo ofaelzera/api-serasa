@@ -12,12 +12,12 @@ class MeProteja
 
     public static function isProducao()
     {
-        return self::$PRODUCAO;
+        return (auth('api')->user()->isProducao == 1) ? true : false;
     }
 
     public static function getUrl()
     {
-        if(self::$PRODUCAO) {
+        if(self::isProducao()) {
             return 'https://services.serasaexperian.com.br/MeAviseProxy?wsdl';
         }
         return 'https://serviceshomologa.serasaexperian.com.br/MeAviseProxy?wsdl';
@@ -25,10 +25,10 @@ class MeProteja
 
     public static function getAssinaturaDistribuidor()
     {
-        if(self::$PRODUCAO) {
+        if(self::isProducao()) {
             $aLogons = [
                 'logon'     => '21742667',
-                'password'  => 'GUI@1212',
+                'password'  => 'GUI@1222',
             ];
         }else
         {
